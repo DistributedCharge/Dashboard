@@ -2,6 +2,7 @@ site_name: Distributed Charge
 
 nav:
 - Home: README.md
+- Demo: demo.md
 
 theme: material
 

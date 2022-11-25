@@ -77,6 +77,36 @@ variable = parse_datalog('../data_files/VariableSmartLoadDataLog-2022.11.16--18.
 variable.head()
 ```
 
+## Visualization
+
+```python
+datalog.head()
+```
+
+```python
+import plotly.graph_objs as go
+```
+
+```python
+def plot_param(ser):
+    return go.Scatter(x=ser.index, y=ser)
+```
+
+```python
+traces = []
+traces.append(plot_param(datalog['EnergyCost']))
+
+go.Figure(traces)
+```
+
+```python
+datalog.columns
+```
+
+```python
+datalog['SalePeriodTimeRemaining[sec]']
+```
+
 ```python
 
 ```

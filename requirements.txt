@@ -2,3 +2,5 @@
 pandas
 numpy
 dash
+git+https://github.com/predsci/psidash.git
+python-dotenv

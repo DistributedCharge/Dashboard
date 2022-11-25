@@ -1,0 +1,127 @@
+import:
+  dcc: dash.dcc
+  html: dash.html
+  dbc: dash_bootstrap_components
+  daq: dash_daq
+
+
+app:
+  # jupyter_dash.JupyterDash:
+  dash.Dash:
+    external_stylesheets:
+      - https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css
+      - https://codepen.io/chriddyp/pen/bWLwgP.css
+      - https://cdn.jsdelivr.net/npm/bootswatch@5.1.3/dist/slate/bootstrap.min.css
+    # external_scripts:
+    #   - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML
+    title: Distributed Charge Dashboard
+
+
+
+app.run_server:
+ host: '0.0.0.0'
+ port: 8080
+ extra_files:
+   - dashboard.yaml
+   - callbacks.py
+ debug: ${env:DASH_DEBUG}  # new syntax ${oc.env:DASH_DEBUG, False}
+ dev_tools_hot_reload: True
+
+plot_config:
+  responsive: False
+  autosizable: True
+  # doubleClick: False
+  displayModeBar: False
+
+default_layout:
+  paper_bgcolor: black
+  plot_bgcolor: black
+  autosize: True
+  template: plotly_dark
+  # height: 800
+  # xaxis:
+  #   visible: False
+  # yaxis:
+  #   visible: False
+
+
+layout:
+  # # Trying to point to mathjax to convert latex to readable format, but see https://dash.plotly.com/dash-html-components/script and https://docs.mathjax.org/en/v2.7-latest/start.html
+  # script:
+  #   type: "text/javascript" async
+  #   src: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML"
+  dbc.Container:
+    fluid: True
+    children:
+    - dcc.Location:
+        id: url
+        refresh: False
+    - html.H1: Distributed Charge Dashboard
+    - html.Div: Power payments monitoring!
+    - dbc.Card:
+        children:
+        # - dbc.CardBody:
+        #     children:
+        - dbc.Row:
+            children:
+              - dbc.Col:
+                  width: 2
+                  children:
+                    html.Div: Select primary
+              - dbc.Col:
+                  width: 4
+                  children:
+                    dcc.Dropdown:
+                      id: parameters
+                      clearable: False
+
+        - dbc.Row:
+            children:
+            - dcc.Graph:
+                id: plot-primary
+                style:
+                  height: 400
+                config: ${plot_config}
+                mathjax: True
+                figure:
+                 data:
+                 layout: ${default_layout}
+
+    - dbc.Card:
+        children:
+        # - dbc.CardBody:
+        #     children:
+        - dbc.Row:
+            children:
+            - dcc.Graph:
+                id: plot-secondary
+                style:
+                  height: 400
+                config: ${plot_config}
+                mathjax: True
+                figure:
+                 data:
+                 layout: ${default_layout}
+
+callbacks:
+  update_parameter_options:
+    input:
+    - id: url
+      attr: pathname
+    output:
+    - id: parameters
+      attr: options
+    - id: parameters
+      attr: value
+    callback: callbacks.update_parameter_options
+
+  update_primary_figure:
+    input:
+    - id: parameters
+      attr: value
+    output:
+    - id: plot-primary
+      attr: figure
+    callback: callbacks.update_primary_figure
+
+

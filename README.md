@@ -24,9 +24,14 @@ conda activate dc # activates distributed charge environment
 * pandas
 * numpy
 * plotly
-* dash (from plotly)
+* dash (from plotly) https://dash.plotly.com/introduction
+* psidash (from psi/Asher) https://github.com/predsci/psidash
 
-`pip install -r requirements.txt`
+These are installed automatically by installing this project in editable mode
+
+```sh
+(dc) pip install -e . # from base of this repo
+```
 
 ### Docs requirements
 
