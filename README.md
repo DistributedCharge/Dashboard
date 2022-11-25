@@ -14,7 +14,28 @@ Once installed, you can spin up a new conda environment for this project:
 
 ```sh
 conda create -n dc python=3.7
-conda activate dc # activate distributed charge environment
-
+conda activate dc # activates distributed charge environment
+(dc) conda install jupyter
 (dc) pip install -r requirements.txt
 ```
+
+### Core requirements
+
+* pandas
+* numpy
+* plotly
+* dash (from plotly)
+
+`pip install -r requirements.txt`
+
+### Docs requirements
+
+These packages are necessary for generating the documentation site.
+
+* mkdocs `pip install mkdocs`
+* markdown-include - for embedding files outside the docs path `pip install markdown-include`
+* codehighlight - rendering code blocks `pip install pygments`
+* mkautodoc - docstrings `pip install mkautodoc`
+* mdxmath - mathematics rendering `pip install python-markdown-math`
+* material theme - `pip install mkdocs-material`
+* jupytext - executable markdown as jupyter notebook `pip install jupytext`
