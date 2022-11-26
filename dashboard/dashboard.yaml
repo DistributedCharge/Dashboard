@@ -57,24 +57,38 @@ layout:
         id: url
         refresh: False
     - html.H1: Distributed Charge Dashboard
-    - html.Div: Power payments monitoring!
+    - html.Div: Power payments over lightning!
     - dbc.Card:
+        body: True
         children:
-        # - dbc.CardBody:
-        #     children:
         - dbc.Row:
             children:
               - dbc.Col:
                   width: 2
                   children:
-                    html.Div: Select primary
+                    html.Div: primary
               - dbc.Col:
-                  width: 4
+                  width: 2
                   children:
                     dcc.Dropdown:
-                      id: parameters
+                      id: param1
                       clearable: False
-
+                      value: Power[W]
+              - dbc.Col:
+                  width: 1
+                  children:
+                    html.B:
+                      children: vs
+                  style:
+                    textAlign: center
+              - dbc.Col:
+                  width: 2
+                  children:
+                    dcc.Dropdown:
+                      id: param2
+                      clearable: False
+                      value: Time
+        - html.Br:
         - dbc.Row:
             children:
             - dcc.Graph:
@@ -88,9 +102,36 @@ layout:
                  layout: ${default_layout}
 
     - dbc.Card:
+        body: True
         children:
-        # - dbc.CardBody:
-        #     children:
+        - dbc.Row:
+            children:
+              - dbc.Col:
+                  width: 2
+                  children:
+                    html.Div: secondary
+              - dbc.Col:
+                  width: 2
+                  children:
+                    dcc.Dropdown:
+                      id: param3
+                      clearable: False
+                      value: Power[W]
+              - dbc.Col:
+                  width: 1
+                  children:
+                    html.B:
+                      children: vs
+                  style:
+                    textAlign: center
+              - dbc.Col:
+                  width: 2
+                  children:
+                    dcc.Dropdown:
+                      id: param4
+                      clearable: False
+                      value: Rate[sat/Wh]
+        - html.Br:
         - dbc.Row:
             children:
             - dcc.Graph:
@@ -103,25 +144,205 @@ layout:
                  data:
                  layout: ${default_layout}
 
+    - dbc.Card:
+        body: True
+        children:
+        - dbc.Row:
+            children:
+              - dbc.Col:
+                  width: 2
+                  children:
+                    html.Div: Discrete
+              - dbc.Col:
+                  width: 2
+                  children:
+                    dcc.Dropdown:
+                      id: discrete_param1
+                      clearable: False
+                      value: PercentLoad[%]
+              - dbc.Col:
+                  width: 1
+                  children:
+                    html.B:
+                      children: vs
+                  style:
+                    textAlign: center
+              - dbc.Col:
+                  width: 2
+                  children:
+                    dcc.Dropdown:
+                      id: discrete_param2
+                      clearable: False
+                      value: Time
+        - html.Br:
+        - dbc.Row:
+            children:
+            - dcc.Graph:
+                id: plot-discrete
+                style:
+                  height: 400
+                config: ${plot_config}
+                mathjax: True
+                figure:
+                 data:
+                 layout: ${default_layout}
+
+
+    - dbc.Card:
+        body: True
+        children:
+        - dbc.Row:
+            children:
+              - dbc.Col:
+                  width: 2
+                  children:
+                    html.Div: Variable
+              - dbc.Col:
+                  width: 2
+                  children:
+                    dcc.Dropdown:
+                      id: variable_param1
+                      clearable: False
+                      value: PercentLoad[%]
+              - dbc.Col:
+                  width: 1
+                  children:
+                    html.B:
+                      children: vs
+                  style:
+                    textAlign: center
+              - dbc.Col:
+                  width: 2
+                  children:
+                    dcc.Dropdown:
+                      id: variable_param2
+                      clearable: False
+                      value: Time
+        - html.Br:
+        - dbc.Row:
+            children:
+            - dcc.Graph:
+                id: plot-variable
+                style:
+                  height: 400
+                config: ${plot_config}
+                mathjax: True
+                figure:
+                 data:
+                 layout: ${default_layout}
+
+
 callbacks:
-  update_parameter_options:
+  # plot 1
+  update_parameter1_options:
     input:
     - id: url
       attr: pathname
     output:
-    - id: parameters
+    - id: param1
       attr: options
-    - id: parameters
-      attr: value
     callback: callbacks.update_parameter_options
-
+  update_parameter2_options:
+    input:
+    - id: url
+      attr: pathname
+    output:
+    - id: param2
+      attr: options
+    callback: callbacks.update_parameter_options
   update_primary_figure:
     input:
-    - id: parameters
+    - id: param1
+      attr: value
+    - id: param2
       attr: value
     output:
     - id: plot-primary
       attr: figure
-    callback: callbacks.update_primary_figure
+    callback: callbacks.update_figure
 
+  # plot 2
+  update_parameter3_options:
+    input:
+    - id: url
+      attr: pathname
+    output:
+    - id: param3
+      attr: options
+    callback: callbacks.update_parameter_options
+  update_parameter4_options:
+    input:
+    - id: url
+      attr: pathname
+    output:
+    - id: param4
+      attr: options
+    callback: callbacks.update_parameter_options
+  update_secondary_figure:
+    input:
+    - id: param3
+      attr: value
+    - id: param4
+      attr: value
+    output:
+    - id: plot-secondary
+      attr: figure
+    callback: callbacks.update_figure
+
+
+  # plot discrete
+  update_discrete_param1_options:
+    input:
+    - id: url
+      attr: pathname
+    output:
+    - id: discrete_param1
+      attr: options
+    callback: callbacks.update_discrete_options
+  update_discrete_param2_options:
+    input:
+    - id: url
+      attr: pathname
+    output:
+    - id: discrete_param2
+      attr: options
+    callback: callbacks.update_discrete_options
+  update_discrete_figure:
+    input:
+    - id: discrete_param1
+      attr: value
+    - id: discrete_param2
+      attr: value
+    output:
+    - id: plot-discrete
+      attr: figure
+    callback: callbacks.update_discrete_figure
+
+  # plot variable
+  update_variable_param1_options:
+    input:
+    - id: url
+      attr: pathname
+    output:
+    - id: variable_param1
+      attr: options
+    callback: callbacks.update_variable_options
+  update_variable_param2_options:
+    input:
+    - id: url
+      attr: pathname
+    output:
+    - id: variable_param2
+      attr: options
+    callback: callbacks.update_variable_options
+  update_variable_figure:
+    input:
+    - id: variable_param1
+      attr: value
+    - id: variable_param2
+      attr: value
+    output:
+    - id: plot-variable
+      attr: figure
+    callback: callbacks.update_variable_figure
 

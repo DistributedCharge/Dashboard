@@ -1,3 +1,8 @@
+```python
+%load_ext autoreload
+%autoreload 2
+```
+
 I've placed the following files in `data_files/` (from root of this repo)
 
 ```python
@@ -54,11 +59,16 @@ datalog
 I'm not sure where the last column gets generated
 
 ```python
-discrete = parse_datalog('../data_files/DiscreteSmartLoadDataLog-2022.11.16--18.59.44.027119.txt')
+discrete = parse_datalog('../data_files/DiscreteSmartLoadDataLog-2022.11.16--18.59.44.027119.txt',
+    set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
 ```
 
 ```python
-discrete
+discrete.columns
+```
+
+```python
+discrete['PercentLoad[%]']
 ```
 
 * UnixTime
@@ -67,7 +77,7 @@ discrete
 * PercentLoad[%]
 
 
-## DiscreteSmartLoadDataLog
+## VariableSmartLoadDataLog
 
 ```python
 variable = parse_datalog('../data_files/VariableSmartLoadDataLog-2022.11.16--18.59.44.028001.txt')
@@ -78,10 +88,6 @@ variable.head()
 ```
 
 ## Visualization
-
-```python
-datalog.head()
-```
 
 ```python
 import plotly.graph_objs as go
@@ -105,6 +111,10 @@ datalog.columns
 
 ```python
 datalog['SalePeriodTimeRemaining[sec]']
+```
+
+```python
+
 ```
 
 ```python

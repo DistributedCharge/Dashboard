@@ -1,3 +1,4 @@
+* multiple plots working for discrete and variable loads
 
 # 2022-11-26 10:13:32.051180: clock-in
 
