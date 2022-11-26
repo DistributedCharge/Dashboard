@@ -1,3 +1,8 @@
+
+# 2022-11-26 10:13:32.051180: clock-in
+
+streaming data into plots with extendData attribute https://stackoverflow.com/a/63681810
+
 # 2022-11-25 16:46:59.739895: clock-out
 
 * preliminary dashboard
