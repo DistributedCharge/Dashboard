@@ -15,6 +15,33 @@ DiscreteSmartLoadDataLog-2022.11.16--18.59.44.027119.txt
 VariableSmartLoadDataLog-2022.11.16--18.59.44.028001.txt
 ```
 
+```python
+import plotly.graph_objs as go
+```
+
+```python
+import pandas as pd
+```
+
+```python
+import numpy as np
+```
+
+```python
+
+```
+
+```python
+t0 = pd.Timestamp.now()
+```
+
+```python
+dict(x=(pd.Timestamp.now()-t0).total_seconds())
+```
+
+```python
+np.sin()
+```
 
 ## parsing data log
 

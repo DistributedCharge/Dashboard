@@ -1,7 +1,9 @@
 
 from dcharge.utils import parse_datalog, plot_parameter
 from psidash.psidash import load_conf
-
+import pandas as pd
+import plotly.graph_objs as go
+import numpy as np
 
 conf = load_conf('dashboard.yaml')
 default_layout = conf['default_layout']
@@ -26,6 +28,27 @@ def get_frame_opts(df):
         options.append(dict(label=camel_to_snake(c), value=col))
         
     return options
+
+t0 = pd.Timestamp.now()
+
+def sin_func(t, p=10):
+    return np.sin(np.pi*t/p)
+
+def initialize_plot_test(url):
+    t_ = np.linspace(0, 100, 100)
+    t = [t0 - pd.Timedelta(_, unit='s') for _ in t_]
+    v = sin_func(t_)
+    
+    return go.Figure(
+        [go.Scatter(x=t, y=v)],
+        layout=go.Layout(**default_layout))
+
+def update_plot_test(interval):
+    t = pd.Timestamp.now()
+    dt = (t-t0).total_seconds()
+    v = sin_func(dt)
+    print(t,v)
+    return [dict(x=[[t]], y=[[v]]), [0]]
 
 
 def update_parameter_options(url):
