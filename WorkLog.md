@@ -1,3 +1,6 @@
+
+# 2022-11-26 16:37:40.562356: clock-in
+
 # 2022-11-26 12:12:57.710786: clock-out
 
 * multiple plots working for discrete and variable loads
