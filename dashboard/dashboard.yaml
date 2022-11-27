@@ -59,19 +59,13 @@ layout:
         refresh: False
     - html.H1: Distributed Charge Dashboard
     - html.Div: Power payments over lightning!
+    - dcc.Store:
+        id: datalog-primary-range
+    - dcc.Store:
+        id: datalog-secondary-range
     - dcc.Interval:
         id: update-interval
-    - dbc.Card:
-        body: True
-        children:
-        - dcc.Graph:
-            id: plot-test
-            style:
-              height: 400
-            config: ${plot_config}
-            mathjax: True
-            figure:
-              layout: ${default_layout}
+        interval: 5000
     - dbc.Card:
         body: True
         children:
@@ -250,25 +244,25 @@ callbacks:
 # @app.callback(Output('graph', 'extendData'), [Input('interval', 'n_intervals')])
 # def update_data(n_intervals):
 
-  # init plot test
-  initialize_plot_test:
-    input:
-    - id: url
-      attr: pathname
-    output:
-    - id: plot-test
-      attr: figure
-    callback: callbacks.initialize_plot_test
+  # # init plot test
+  # initialize_plot_test:
+  #   input:
+  #   - id: url
+  #     attr: pathname
+  #   output:
+  #   - id: plot-test
+  #     attr: figure
+  #   callback: callbacks.initialize_plot_test
 
-  # update plot test
-  update_plot_test:
-    input:
-    - id: update-interval
-      attr: n_intervals
-    output:
-    - id: plot-test
-      attr: extendData
-    callback: callbacks.update_plot_test
+  # # update plot test
+  # update_plot_test:
+  #   input:
+  #   - id: update-interval
+  #     attr: n_intervals
+  #   output:
+  #   - id: plot-test
+  #     attr: extendData
+  #   callback: callbacks.update_plot_test
 
 
   # plot 1
@@ -288,7 +282,7 @@ callbacks:
     - id: param2
       attr: options
     callback: callbacks.update_parameter_options
-  update_primary_figure:
+  initialize_datalog_figure:
     input:
     - id: param1
       attr: value
@@ -297,7 +291,24 @@ callbacks:
     output:
     - id: plot-primary
       attr: figure
-    callback: callbacks.update_figure
+    - id: datalog-primary-range
+      attr: data
+    callback: callbacks.initialize_datalog_figure
+
+  # update_datalog_figure:
+  #   input:
+  #   - id: update-interval
+  #     attr: n_intervals
+  #   - id: param1
+  #     attr: value
+  #   - id: param2
+  #     attr: value
+  #   - id: range-data
+  #     attr: data
+  #   output:
+  #   - id: plot-primary
+  #     attr: extendData
+  #   callback: callbacks.update_datalog_figure
 
   # plot 2
   update_parameter3_options:
@@ -325,7 +336,9 @@ callbacks:
     output:
     - id: plot-secondary
       attr: figure
-    callback: callbacks.update_figure
+    - id: datalog-secondary-range
+      attr: data
+    callback: callbacks.initialize_datalog_figure
 
 
   # plot discrete

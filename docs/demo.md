@@ -16,6 +16,11 @@ VariableSmartLoadDataLog-2022.11.16--18.59.44.028001.txt
 ```
 
 ```python
+from dotenv import load_dotenv
+load_dotenv('../.env')
+```
+
+```python
 import plotly.graph_objs as go
 ```
 
@@ -25,22 +30,6 @@ import pandas as pd
 
 ```python
 import numpy as np
-```
-
-```python
-
-```
-
-```python
-t0 = pd.Timestamp.now()
-```
-
-```python
-dict(x=(pd.Timestamp.now()-t0).total_seconds())
-```
-
-```python
-np.sin()
 ```
 
 ## parsing data log
@@ -71,11 +60,15 @@ fname = '../data_files/DataLog-2022.11.16--18.59.38.641397.txt'
 ```
 
 ```python
+import os
+```
+
+```python
 from dcharge.utils import parse_datalog
 ```
 
 ```python
-datalog = parse_datalog(fname)
+datalog = parse_datalog(os.environ['DATA_LOG'])
 
 datalog
 ```
@@ -86,7 +79,7 @@ datalog
 I'm not sure where the last column gets generated
 
 ```python
-discrete = parse_datalog('../data_files/DiscreteSmartLoadDataLog-2022.11.16--18.59.44.027119.txt',
+discrete = parse_datalog(os.environ['DISCRETE_DATA_LOG'],
     set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
 ```
 
@@ -107,7 +100,7 @@ discrete['PercentLoad[%]']
 ## VariableSmartLoadDataLog
 
 ```python
-variable = parse_datalog('../data_files/VariableSmartLoadDataLog-2022.11.16--18.59.44.028001.txt')
+variable = parse_datalog(os.environ['VARIABLE_DATA_LOG'])
 ```
 
 ```python
@@ -140,8 +133,34 @@ datalog.columns
 datalog['SalePeriodTimeRemaining[sec]']
 ```
 
-```python
+## Test data
 
+
+We'll rewrite the data log line by line so the dashboard can pull new data in real time.
+
+```python
+with open(os.environ['DATA_LOG'], 'r') as f:
+    lines = f.readlines()
+```
+
+```python
+int(len(lines)/2)
+```
+
+```python
+import time
+```
+
+```python
+sleep_time = 1
+
+with open('../data_files/DataLog.txt', 'w') as f:
+    for i, line in enumerate(lines):
+        f.write(line)
+        f.flush()
+        if i > 500:
+            print('.', end='')
+            time.sleep(sleep_time)
 ```
 
 ```python

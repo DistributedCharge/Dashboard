@@ -4,17 +4,19 @@ from psidash.psidash import load_conf
 import pandas as pd
 import plotly.graph_objs as go
 import numpy as np
+import os
+from dotenv import load_dotenv
+from dash.exceptions import PreventUpdate
+
+load_dotenv('../.env')
 
 conf = load_conf('dashboard.yaml')
 default_layout = conf['default_layout']
 
-datalog = parse_datalog('../data_files/DataLog-2022.11.16--18.59.38.641397.txt',
+discrete = parse_datalog(os.environ['DISCRETE_DATA_LOG'],
     set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
 
-discrete = parse_datalog('../data_files/DiscreteSmartLoadDataLog-2022.11.16--18.59.44.027119.txt',
-    set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
-
-variable = parse_datalog('../data_files/VariableSmartLoadDataLog-2022.11.16--18.59.44.028001.txt',
+variable = parse_datalog(os.environ['VARIABLE_DATA_LOG'],
     set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
 
 
@@ -52,11 +54,44 @@ def update_plot_test(interval):
 
 
 def update_parameter_options(url):
+    """sets parameters for figures 1 and 2"""
+    datalog = parse_datalog(os.environ['DATA_LOG'],
+        set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
     return get_frame_opts(datalog)
 
 
-def update_figure(param1, param2):
-    return plot_parameter(datalog, param1, param2, default_layout)
+def initialize_datalog_figure(param1, param2):
+    """initializes figures 1 and 2"""
+    datalog = parse_datalog(os.environ['DATA_LOG'],
+        set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
+
+    fig = plot_parameter(datalog, param1, param2, default_layout)
+    return fig, dict(range=datalog['Time'].values[[0,-1]])
+
+
+def update_datalog_figure(interval, param1, param2, range_data):
+    """we need to know the current state of the plot before we can update it"""
+    datalog = parse_datalog(os.environ['DATA_LOG']).drop(
+        columns=['UnixTime', 'DateTime'])
+
+
+    data_store = dict(
+        datalog=datalog['Time'].values[[0,-1]],
+        discrete=discrete['Time'].values[[0,-1]],
+        variable=variable['Time'].values[[0,-1]]
+        )
+    
+    raise PreventUpdate, dict(range=datalog.index[[0,-1]])
+    # return [dict(x=[[t]], y=[[v]]), [0]], data_store
+
+    # print(range_data, interval, param1, param2)
+    
+
+    # datalog_current = parse_datalog(os.environ['DATA_LOG'],
+    #     set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
+
+    # raise PreventUpdate
+    # # return [dict(x=[[t]], y=[[v]]), [0]]
 
 
 def update_discrete_options(url):
