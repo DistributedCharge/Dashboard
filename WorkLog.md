@@ -1,3 +1,6 @@
+
+# 2022-11-27 15:28:53.335042: clock-in
+
 # 2022-11-26 17:53:26.247151: clock-out
 
 * testing streaming data
