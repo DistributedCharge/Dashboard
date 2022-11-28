@@ -65,7 +65,7 @@ layout:
         id: datalog-secondary-range
     - dcc.Interval:
         id: update-interval
-        interval: 5000
+        interval: 2000
     - dbc.Card:
         body: True
         children:
@@ -282,6 +282,7 @@ callbacks:
     - id: param2
       attr: options
     callback: callbacks.update_parameter_options
+
   initialize_datalog_figure:
     input:
     - id: param1
@@ -291,24 +292,25 @@ callbacks:
     output:
     - id: plot-primary
       attr: figure
-    - id: datalog-primary-range
-      attr: data
     callback: callbacks.initialize_datalog_figure
 
-  # update_datalog_figure:
-  #   input:
-  #   - id: update-interval
-  #     attr: n_intervals
-  #   - id: param1
-  #     attr: value
-  #   - id: param2
-  #     attr: value
-  #   - id: range-data
-  #     attr: data
-  #   output:
-  #   - id: plot-primary
-  #     attr: extendData
-  #   callback: callbacks.update_datalog_figure
+  update_datalog_figure:
+    input:
+    - id: update-interval
+      attr: n_intervals
+    - id: param1
+      attr: value
+    - id: param2
+      attr: value
+    state:
+    - id: datalog-primary-range
+      attr: data
+    output:
+    - id: plot-primary
+      attr: extendData
+    - id: datalog-primary-range
+      attr: data
+    callback: callbacks.update_datalog_figure
 
   # plot 2
   update_parameter3_options:
@@ -336,8 +338,6 @@ callbacks:
     output:
     - id: plot-secondary
       attr: figure
-    - id: datalog-secondary-range
-      attr: data
     callback: callbacks.initialize_datalog_figure
 
 
