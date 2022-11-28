@@ -62,6 +62,9 @@ layout:
     - html.Div: Power payments over lightning!
     - dcc.Store:
         id: datalog-primary-range
+        data: # initialize this programmatically
+          range: ['2022-11-16T23:59:41.216000000', '2022-11-17T09:10:53.162599936']
+
     - dcc.Store:
         id: datalog-secondary-range
     - dcc.Interval:

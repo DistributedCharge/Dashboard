@@ -34,9 +34,6 @@ import numpy as np
 
 ## parsing data log
 
-```python
-import pandas as pd
-```
 
 Available columns in datalog file
 
@@ -139,6 +136,7 @@ datalog['SalePeriodTimeRemaining[sec]']
 We'll rewrite the data log line by line so the dashboard can pull new data in real time.
 
 ```python
+import os
 with open(os.environ['DATA_LOG'], 'r') as f:
     lines = f.readlines()
 ```
@@ -152,7 +150,7 @@ import time
 ```
 
 ```python
-sleep_time = 1
+sleep_time = 2
 
 with open('../data_files/DataLog.txt', 'w') as f:
     for i, line in enumerate(lines):
@@ -161,6 +159,14 @@ with open('../data_files/DataLog.txt', 'w') as f:
         if i > 500:
             print('.', end='')
             time.sleep(sleep_time)
+```
+
+```python
+from dash import dcc
+```
+
+```python
+dcc.Graph?
 ```
 
 ```python
