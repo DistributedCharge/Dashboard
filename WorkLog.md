@@ -1,3 +1,4 @@
+* setting up repo, reviewing new dataset
 
 # 2022-11-28 10:58:47.720383: clock-in
 
