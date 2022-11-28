@@ -75,12 +75,21 @@ def initialize_datalog_figure(param1, param2):
     return fig # dict(range=datalog['Time'].values[[0,-1]])
 
 
-def update_datalog_figure(interval, param1, param2, range_data):
+def update_datalog_figure(interval, param1, param2, range_data, fig_state):
     """we need to know the current state of the plot before we can update it"""
     # raise PreventUpdate
     datalog = parse_datalog(os.environ['DATA_LOG'],
         set_time_index=False).drop(
         columns=['UnixTime', 'DateTime'])
+
+    if fig_state is not None:
+        fig_data = fig_state['data']
+        if fig_data is not None:
+            fig_x = fig_data[0]['x']
+            fig_y = fig_data[0]['y']
+            print('fig x:', type(fig_x[0]), fig_x[::50])
+            print('fig y:', type(fig_y[0]), fig_y[::50])
+
 
     if range_data is not None:
         range_ = pd.to_datetime(range_data['range'])
@@ -102,7 +111,7 @@ def update_datalog_figure(interval, param1, param2, range_data):
             p2 = subset[param2].values[-1]
             print(f'{param1}: {p1}, {param2}: {p2}')
 
-            return [dict(x=[[0]], y=[[1]]), [0], 10000000], dict(range=datalog.index[[0,-1]])
+            return [dict(x=[[p2]], y=[[p1]]), [0], 10000000], dict(range=datalog.index[[0,-1]])
         else:
             print('no need to update')
             raise PreventUpdate

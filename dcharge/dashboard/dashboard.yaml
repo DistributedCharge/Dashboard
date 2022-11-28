@@ -309,6 +309,8 @@ callbacks:
     state:
     - id: datalog-primary-range
       attr: data
+    - id: plot-primary
+      attr: figure
     output:
     - id: plot-primary
       attr: extendData
