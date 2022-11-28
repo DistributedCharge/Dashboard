@@ -4,6 +4,7 @@ import:
   dbc: dash_bootstrap_components
   daq: dash_daq
   go: plotly.graph_objs
+  callbacks: dcharge.dashboard.callbacks
 
 
 app:

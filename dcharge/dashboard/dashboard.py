@@ -5,13 +5,15 @@ from psidash.psidash import load_conf, load_dash, load_components
 from psidash.psidash import get_callbacks, assign_callbacks
 from dotenv import load_dotenv
 
-load_dotenv('../.env') # grab environment variables from root directory
-
 import os
 
+dashboard_dir = os.path.dirname(os.path.abspath(__file__))
 
+# grab environment variables from root directory
+load_dotenv(f'{dashboard_dir}/../../.env')
 
-conf = load_conf('dashboard.yaml')
+# load the dashboard configuration file
+conf = load_conf(f'{dashboard_dir}/dashboard.yaml')
 
 server = flask.Flask(__name__) # define flask app.server
 

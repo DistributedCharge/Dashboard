@@ -8,9 +8,14 @@ import os
 from dotenv import load_dotenv
 from dash.exceptions import PreventUpdate
 
-load_dotenv('../.env')
+dashboard_dir = os.path.dirname(os.path.abspath(__file__))
 
-conf = load_conf('dashboard.yaml')
+# grab environment variables from root directory
+load_dotenv(f'{dashboard_dir}/../.env')
+
+# load the dashboard configuration file
+conf = load_conf(f'{dashboard_dir}/dashboard.yaml')
+
 default_layout = conf['default_layout']
 
 discrete = parse_datalog(os.environ['DISCRETE_DATA_LOG'],
