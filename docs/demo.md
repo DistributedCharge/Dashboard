@@ -65,6 +65,38 @@ from dcharge.utils import parse_datalog
 ```
 
 ```python
+def parse_datalog(fname, set_time_index=True):
+    lines = []
+    with open(fname) as f:
+        for i, line in enumerate(f):
+            current = line.strip().split('\t')
+            if i == 0:
+                last = len(current)
+                columns = current
+                # print('\t'.join(columns))
+            else:
+                if last != len(current):
+                    last = len(current)
+                    # print(f'problem at line {i}')
+                lines.append(current)
+
+    print(len(columns))
+    df = pd.DataFrame(lines, columns=columns)
+    df = df.replace(',', '', regex=True)
+
+    print('made it')
+    for c in columns:
+        try:
+            df[c] = pd.to_numeric(df[c])
+            df[c].replace({-1.0: np.NaN}, inplace=True)
+        except:
+            pass
+
+    df['Time'] = pd.to_datetime(df.UnixTime, unit='s')
+    if set_time_index:
+        df.set_index('Time', inplace=True)
+    return df
+
 datalog = parse_datalog(os.environ['DATA_LOG'])
 
 datalog
@@ -137,6 +169,11 @@ We'll rewrite the data log line by line so the dashboard can pull new data in re
 
 ```python
 import os
+os.environ['DATA_LOG']
+```
+
+```python
+import os
 with open(os.environ['DATA_LOG'], 'r') as f:
     lines = f.readlines()
 ```
@@ -150,7 +187,7 @@ import time
 ```
 
 ```python
-sleep_time = 2
+sleep_time = 1 # seconds
 
 with open('../data_files/DataLog.txt', 'w') as f:
     for i, line in enumerate(lines):
@@ -170,5 +207,57 @@ dcc.Graph?
 ```
 
 ```python
+import pandas as pd
+```
 
+```python
+t0 = pd.Timestamp.now()
+```
+
+```python
+tf = pd.Timestamp.now()
+```
+
+```python
+t = pd.date_range(t0, tf, freq='100ms')
+```
+
+```python
+t
+```
+
+```python
+import plotly.graph_objs as go
+```
+
+```python
+trace = go.Scatter(x=[1,2,3], y=[4,5,5])
+```
+
+```python
+trace.x
+```
+
+```python
+t0 = pd.Timestamp.now()
+```
+
+```python
+t0_dt = t0.to_datetime64()
+```
+
+```python
+int(t0_dt)
+```
+
+```python
+
+```
+
+```python
+trace.to_plotly_json()
+```
+
+```python
+pd.date_range("2018-01-01", periods=3, freq="H")
 ```

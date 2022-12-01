@@ -18,11 +18,7 @@ conf = load_conf(f'{dashboard_dir}/dashboard.yaml')
 
 default_layout = conf['default_layout']
 
-discrete = parse_datalog(os.environ['DISCRETE_DATA_LOG'],
-    set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
 
-variable = parse_datalog(os.environ['VARIABLE_DATA_LOG'],
-    set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
 
 
 def camel_to_snake(s):
@@ -36,26 +32,39 @@ def get_frame_opts(df):
         
     return options
 
-t0 = pd.Timestamp.now()
-
-def sin_func(t, p=10):
+def sin_func(t, p=3):
     return np.sin(np.pi*t/p)
 
-def initialize_plot_test(url):
-    t_ = np.linspace(0, 100, 100)
-    t = [t0 - pd.Timedelta(_, unit='s') for _ in t_]
-    v = sin_func(t_)
-    
-    return go.Figure(
-        [go.Scatter(x=t, y=v)],
-        layout=go.Layout(**default_layout))
+def test_plot(t_i, t_f, p):
+    t = pd.date_range(t_i, t_f, freq='50ms')
+    t_0 = pd.to_datetime(t_i.date()) # midnight this morning
+    t_ = (t-t_0).total_seconds()
+    v = sin_func(t_,p)
+    trace = go.Scatter(x=t, y=v)
+    return trace
 
-def update_plot_test(interval):
-    t = pd.Timestamp.now()
-    dt = (t-t0).total_seconds()
-    v = sin_func(dt)
-    print(t,v)
-    return [dict(x=[[t]], y=[[v]]), [0]]
+def initialize_plot(url):
+    fig = go.Figure([go.Scatter(x=[],y=[])],
+        layout=go.Layout(**default_layout))
+    return fig
+
+def update_plot_test(interval, period, data_store):
+    if data_store is None:
+        t_f = pd.Timestamp.now()
+        t_i = t_f - pd.Timedelta(10, unit='s')
+        data_store = dict(t_final=t_f)
+        trace = test_plot(t_i, t_f, period)
+    else:
+        t_i = pd.to_datetime(data_store['t_final'])
+        t_f = pd.Timestamp.now()
+        trace = test_plot(t_i, t_f, period)
+        data_store['t_final'] = t_f
+    
+    trace_dict = trace.to_plotly_json()
+    x = trace_dict['x']
+    y = trace_dict['y']
+
+    return [dict(x=[x], y=[y]), [0]], data_store
 
 
 def update_parameter_options(url):
@@ -69,81 +78,74 @@ def initialize_datalog_figure(param1, param2):
     """initializes figures 1 and 2"""
     datalog = parse_datalog(os.environ['DATA_LOG'],
         set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
-    print('initial datalog range:', datalog.Time.values[[0,-1]])
+    # print('initial datalog range:', datalog.Time.values[[0,-1]])
 
     fig = plot_parameter(datalog, param1, param2, default_layout)
     return fig # dict(range=datalog['Time'].values[[0,-1]])
 
 
-def update_datalog_figure(interval, param1, param2, range_data, fig_state):
-    """we need to know the current state of the plot before we can update it"""
-    # raise PreventUpdate
-    datalog = parse_datalog(os.environ['DATA_LOG'],
-        set_time_index=False).drop(
-        columns=['UnixTime', 'DateTime'])
+def update_from_file(fname, param1, param2, data_store):
+    if data_store is None:
+        # load current datalog file
+        df = parse_datalog(fname,
+            set_time_index=False).drop(
+            columns=['UnixTime', 'DateTime'])
+        t_i, t_f = df.Time.values[[0,-1]]
+        data_store = dict(t_final=t_f)
+    else:
+        # load current datalog file (it may have been updated)
+        df = parse_datalog(fname,
+            set_time_index=False).drop(
+            columns=['UnixTime', 'DateTime'])
+        t_i = pd.to_datetime(data_store['t_final'])
+        t_f = df.Time.values[-1]
+        data_store = dict(t_final=t_f)
 
-    if fig_state is not None:
-        fig_data = fig_state['data']
-        if fig_data is not None:
-            fig_x = fig_data[0]['x']
-            fig_y = fig_data[0]['y']
-            print('fig x:', type(fig_x[0]), fig_x[::50])
-            print('fig y:', type(fig_y[0]), fig_y[::50])
+    if t_f > t_i:
+        # gather new data starting at the end of the previous time series
+        df.set_index('Time', inplace=True)
+        subset = df.loc[t_i:t_f].reset_index()
+        fig = plot_parameter(subset, param1, param2, default_layout)
+        trace = fig.data[0].to_plotly_json()
+        x = trace['x']
+        y = trace['y']
+        result = [dict(x=[x], y=[y]), [0]], data_store
+        return result
+    else:
+        print('no need to update')
+        raise PreventUpdate
 
-
-    if range_data is not None:
-        range_ = pd.to_datetime(range_data['range'])
-    
-        last_time_prev = range_[-1]
-        last_time = datalog.Time.values[-1]
-
-        if last_time > last_time_prev:
-            print('update!!', last_time, last_time_prev)
-
-            # gather new data starting at the end of the previous time series
-            datalog.set_index('Time', inplace=True)
-            subset = datalog.loc[last_time_prev:]
-            print(subset.index.dtype)
-
-            # return time to a column in case that's what we want to plot
-            subset.reset_index(inplace=True) 
-            p1 = subset[param1].values[-1]
-            p2 = subset[param2].values[-1]
-            print(f'{param1}: {p1}, {param2}: {p2}')
-
-            return [dict(x=[[p2]], y=[[p1]]), [0], 10000000], dict(range=datalog.index[[0,-1]])
-        else:
-            print('no need to update')
-            raise PreventUpdate
-
-    raise PreventUpdate
-
-    # return [dict(), [0]], dict(range=datalog.Time.values[[0,-1]])
-
-
-
-
-    # return [dict(x=[[t]], y=[[v]]), [0]], data_store
-
-    # print(range_data, interval, param1, param2)
-    
-
-    # datalog_current = parse_datalog(os.environ['DATA_LOG'],
-    #     set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
-
-    # raise PreventUpdate
-    # # return [dict(x=[[t]], y=[[v]]), [0]]
+def update_datalog_figure(interval, param1, param2, data_store):
+    return update_from_file(os.environ['DATA_LOG'], param1, param2, data_store)
 
 
 def update_discrete_options(url):
-    return get_frame_opts(discrete)
+    df = parse_datalog(os.environ['DISCRETE_DATA_LOG'],
+                set_time_index=False).drop(
+                columns=['UnixTime', 'DateTime'])
+    return get_frame_opts(df)
 
-def update_discrete_figure(param1, param2):
-    return plot_parameter(discrete, param1, param2, default_layout)
+def initialize_discrete_figure(param1, param2):
+    df = parse_datalog(os.environ['DISCRETE_DATA_LOG'],
+                set_time_index=False).drop(
+                columns=['UnixTime', 'DateTime'])
+    return plot_parameter(df, param1, param2, default_layout)
+
+
+def update_discrete_figure(interval, param1, param2, data_store):
+    return update_from_file(os.environ['DISCRETE_DATA_LOG'], param1, param2, data_store)
 
 
 def update_variable_options(url):
+    variable = parse_datalog(os.environ['VARIABLE_DATA_LOG'],
+        set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
     return get_frame_opts(variable)
 
-def update_variable_figure(param1, param2):
+def initialize_variable_figure(param1, param2):
+    variable = parse_datalog(os.environ['VARIABLE_DATA_LOG'],
+        set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
     return plot_parameter(variable, param1, param2, default_layout)
+
+def update_variable_figure(interval, param1, param2, data_store):
+    return update_from_file(os.environ['VARIABLE_DATA_LOG'], param1, param2, data_store)
+

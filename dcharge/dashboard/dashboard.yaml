@@ -46,6 +46,14 @@ default_layout:
   # yaxis:
   #   visible: False
 
+default_figure:
+  data:
+  - x: []
+    y: []
+    type: scatter
+  layout: ${default_layout}
+
+
 
 layout:
   # # Trying to point to mathjax to convert latex to readable format, but see https://dash.plotly.com/dash-html-components/script and https://docs.mathjax.org/en/v2.7-latest/start.html
@@ -61,15 +69,37 @@ layout:
     - html.H1: Distributed Charge Dashboard
     - html.Div: Power payments over lightning!
     - dcc.Store:
-        id: datalog-primary-range
-        data: # initialize this programmatically
-          range: ['2022-11-16T23:59:41.216000000', '2022-11-17T09:10:53.162599936']
-
+        id: datalog-store
     - dcc.Store:
-        id: datalog-secondary-range
+        id: datalog-secondary-store
+    - dcc.Store:
+        id: discrete-store
+    - dcc.Store:
+        id: variable-store
     - dcc.Interval:
         id: update-interval
-        interval: 2000
+        interval: 100000
+    # - dbc.Card:
+    #     body: True
+    #     children:
+    #     - dbc.Row:
+    #         children:
+    #         - dcc.Store:
+    #             id: plot-test-store
+    #         - dcc.Slider:
+    #             id: test-period
+    #             min: 1
+    #             max: 10
+    #             value: 3
+    #             updatemode: mouseup
+    #         - dcc.Graph:
+    #             id: plot-test
+    #             style:
+    #               height: 400
+    #             config: ${plot_config}
+    #             mathjax: True
+    #             figure: ${default_figure}
+
     - dbc.Card:
         body: True
         children:
@@ -109,9 +139,7 @@ layout:
                   height: 400
                 config: ${plot_config}
                 mathjax: True
-                figure:
-                 data:
-                 layout: ${default_layout}
+                figure: ${default_figure}
 
     - dbc.Card:
         body: True
@@ -152,9 +180,7 @@ layout:
                   height: 400
                 config: ${plot_config}
                 mathjax: True
-                figure:
-                 data:
-                 layout: ${default_layout}
+                figure: ${default_figure}
 
     - dbc.Card:
         body: True
@@ -195,9 +221,7 @@ layout:
                   height: 400
                 config: ${plot_config}
                 mathjax: True
-                figure:
-                 data:
-                 layout: ${default_layout}
+                figure: ${default_figure}
 
 
     - dbc.Card:
@@ -239,37 +263,27 @@ layout:
                   height: 400
                 config: ${plot_config}
                 mathjax: True
-                figure:
-                 data:
-                 layout: ${default_layout}
+                figure: ${default_figure}
 
 
 callbacks:
-# @app.callback(Output('graph', 'extendData'), [Input('interval', 'n_intervals')])
-# def update_data(n_intervals):
-
-  # # init plot test
-  # initialize_plot_test:
-  #   input:
-  #   - id: url
-  #     attr: pathname
-  #   output:
-  #   - id: plot-test
-  #     attr: figure
-  #   callback: callbacks.initialize_plot_test
-
-  # # update plot test
-  # update_plot_test:
+  # update_plot_test: # test sin function
   #   input:
   #   - id: update-interval
   #     attr: n_intervals
+  #   - id: test-period
+  #     attr: value
+  #   state:
+  #   - id: plot-test-store
+  #     attr: data
   #   output:
   #   - id: plot-test
   #     attr: extendData
+  #   - id: plot-test-store
+  #     attr: data
   #   callback: callbacks.update_plot_test
 
-
-  # plot 1
+  ############ plot 1 ##########
   update_parameter1_options:
     input:
     - id: url
@@ -278,6 +292,7 @@ callbacks:
     - id: param1
       attr: options
     callback: callbacks.update_parameter_options
+
   update_parameter2_options:
     input:
     - id: url
@@ -298,6 +313,7 @@ callbacks:
       attr: figure
     callback: callbacks.initialize_datalog_figure
 
+
   update_datalog_figure:
     input:
     - id: update-interval
@@ -307,18 +323,16 @@ callbacks:
     - id: param2
       attr: value
     state:
-    - id: datalog-primary-range
+    - id: datalog-store
       attr: data
-    - id: plot-primary
-      attr: figure
     output:
     - id: plot-primary
       attr: extendData
-    - id: datalog-primary-range
+    - id: datalog-store
       attr: data
     callback: callbacks.update_datalog_figure
 
-  # plot 2
+  ############ plot 2 #########
   update_parameter3_options:
     input:
     - id: url
@@ -327,6 +341,7 @@ callbacks:
     - id: param3
       attr: options
     callback: callbacks.update_parameter_options
+
   update_parameter4_options:
     input:
     - id: url
@@ -335,7 +350,8 @@ callbacks:
     - id: param4
       attr: options
     callback: callbacks.update_parameter_options
-  update_secondary_figure:
+
+  initialize_secondary_figure:
     input:
     - id: param3
       attr: value
@@ -346,8 +362,26 @@ callbacks:
       attr: figure
     callback: callbacks.initialize_datalog_figure
 
+  update_secondary_figure:
+    input:
+    - id: update-interval
+      attr: n_intervals
+    - id: param3
+      attr: value
+    - id: param4
+      attr: value
+    state:
+    - id: datalog-secondary-store
+      attr: data
+    output:
+    - id: plot-secondary
+      attr: extendData
+    - id: datalog-secondary-store
+      attr: data
+    callback: callbacks.update_datalog_figure
 
-  # plot discrete
+
+  ######### plot discrete
   update_discrete_param1_options:
     input:
     - id: url
@@ -356,6 +390,7 @@ callbacks:
     - id: discrete_param1
       attr: options
     callback: callbacks.update_discrete_options
+
   update_discrete_param2_options:
     input:
     - id: url
@@ -364,7 +399,8 @@ callbacks:
     - id: discrete_param2
       attr: options
     callback: callbacks.update_discrete_options
-  update_discrete_figure:
+
+  initialize_discrete_figure:
     input:
     - id: discrete_param1
       attr: value
@@ -373,9 +409,27 @@ callbacks:
     output:
     - id: plot-discrete
       attr: figure
+    callback: callbacks.initialize_discrete_figure
+
+  update_discrete_figure:
+    input:
+    - id: update-interval
+      attr: n_intervals
+    - id: discrete_param1
+      attr: value
+    - id: discrete_param2
+      attr: value
+    state:
+    - id: discrete-store
+      attr: data
+    output:
+    - id: plot-discrete
+      attr: extendData
+    - id: discrete-store
+      attr: data
     callback: callbacks.update_discrete_figure
 
-  # plot variable
+  ########## plot variable
   update_variable_param1_options:
     input:
     - id: url
@@ -384,6 +438,7 @@ callbacks:
     - id: variable_param1
       attr: options
     callback: callbacks.update_variable_options
+
   update_variable_param2_options:
     input:
     - id: url
@@ -392,7 +447,8 @@ callbacks:
     - id: variable_param2
       attr: options
     callback: callbacks.update_variable_options
-  update_variable_figure:
+
+  initialize_variable_figure:
     input:
     - id: variable_param1
       attr: value
@@ -401,5 +457,24 @@ callbacks:
     output:
     - id: plot-variable
       attr: figure
+    callback: callbacks.initialize_variable_figure
+
+
+  update_variable_figure:
+    input:
+    - id: update-interval
+      attr: n_intervals
+    - id: variable_param1
+      attr: value
+    - id: variable_param2
+      attr: value
+    state:
+    - id: variable-store
+      attr: data
+    output:
+    - id: plot-variable
+      attr: extendData
+    - id: variable-store
+      attr: data
     callback: callbacks.update_variable_figure
 
