@@ -1,3 +1,6 @@
+
+# 2022-12-01 10:42:28.349302: clock-in
+
 # 2022-11-28 16:14:22.113781: clock-out
 
 * rendered initial plot
