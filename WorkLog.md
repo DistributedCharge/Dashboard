@@ -1,4 +1,11 @@
+* meeting with Andy, dashboard demo
 * streaming data working
+
+Next steps
+* sliding time window
+* containerization
+* cross filtering?
+* feed with new dataset
 
 # 2022-12-01 10:42:28.349302: clock-in
 

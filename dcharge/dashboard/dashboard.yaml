@@ -33,7 +33,7 @@ plot_config:
   responsive: False
   autosizable: True
   # doubleClick: False
-  displayModeBar: False
+  displayModeBar: True
 
 default_layout:
   paper_bgcolor: black
@@ -78,7 +78,7 @@ layout:
         id: variable-store
     - dcc.Interval:
         id: update-interval
-        interval: 100000
+        interval: 1000
     # - dbc.Card:
     #     body: True
     #     children:
