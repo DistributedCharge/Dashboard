@@ -8,13 +8,12 @@ def parse_datalog(fname, set_time_index=True):
         for i, line in enumerate(f):
             current = line.strip().split('\t')
             if i == 0:
-                last = len(current)
                 columns = current
-                # print('\t'.join(columns))
+                ncols = len(current)
             else:
-                if last != len(current):
-                    last = len(current)
-                    # print(f'problem at line {i}')
+                if len(current) != ncols:
+                    print(f'problem at line {i}')
+                    raise IOError(f'line of length {len(current)} does not match {ncols} cols:{columns} {current}')
                 lines.append(current)
 
     df = pd.DataFrame(lines, columns=columns)

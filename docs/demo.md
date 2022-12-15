@@ -6,7 +6,7 @@
 I've placed the following files in `data_files/` (from root of this repo)
 
 ```python
-ls ../data_files
+ls ../Plots/InputData
 ```
 
 ```
@@ -53,7 +53,15 @@ Available columns in datalog file
 * TotalNumberOfPayments
 
 ```python
-fname = '../data_files/DataLog-2022.11.16--18.59.38.641397.txt'
+# fname = '../data_files/DataLog-2022.11.16--18.59.38.641397.txt'
+```
+
+```python
+cat ../Plots/InputData/DataLog.txt
+```
+
+```python
+fname = '../Plots/InputData/DataLog.txt'
 ```
 
 ```python
@@ -65,39 +73,7 @@ from dcharge.utils import parse_datalog
 ```
 
 ```python
-def parse_datalog(fname, set_time_index=True):
-    lines = []
-    with open(fname) as f:
-        for i, line in enumerate(f):
-            current = line.strip().split('\t')
-            if i == 0:
-                last = len(current)
-                columns = current
-                # print('\t'.join(columns))
-            else:
-                if last != len(current):
-                    last = len(current)
-                    # print(f'problem at line {i}')
-                lines.append(current)
-
-    print(len(columns))
-    df = pd.DataFrame(lines, columns=columns)
-    df = df.replace(',', '', regex=True)
-
-    print('made it')
-    for c in columns:
-        try:
-            df[c] = pd.to_numeric(df[c])
-            df[c].replace({-1.0: np.NaN}, inplace=True)
-        except:
-            pass
-
-    df['Time'] = pd.to_datetime(df.UnixTime, unit='s')
-    if set_time_index:
-        df.set_index('Time', inplace=True)
-    return df
-
-datalog = parse_datalog(os.environ['DATA_LOG'])
+datalog = parse_datalog(fname)
 
 datalog
 ```

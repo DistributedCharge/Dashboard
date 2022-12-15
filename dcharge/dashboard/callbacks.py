@@ -7,6 +7,11 @@ import numpy as np
 import os
 from dotenv import load_dotenv
 from dash.exceptions import PreventUpdate
+import logging
+# logging.basicConfig(filename='dashboard.log', level=logging.DEBUG)
+
+logging.debug('Starting dashboard')
+
 
 dashboard_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -17,8 +22,6 @@ load_dotenv(f'{dashboard_dir}/../.env')
 conf = load_conf(f'{dashboard_dir}/dashboard.yaml')
 
 default_layout = conf['default_layout']
-
-
 
 
 def camel_to_snake(s):
@@ -66,17 +69,19 @@ def update_plot_test(interval, period, data_store):
 
     return [dict(x=[x], y=[y]), [0]], data_store
 
+datalog_filename = f"{os.environ['DATA_PATH']}/{os.environ['DATA_LOG']}"
 
 def update_parameter_options(url):
     """sets parameters for figures 1 and 2"""
-    datalog = parse_datalog(os.environ['DATA_LOG'],
+    
+    datalog = parse_datalog(datalog_filename,
         set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
     return get_frame_opts(datalog)
 
 
 def initialize_datalog_figure(param1, param2):
     """initializes figures 1 and 2"""
-    datalog = parse_datalog(os.environ['DATA_LOG'],
+    datalog = parse_datalog(datalog_filename,
         set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
     # print('initial datalog range:', datalog.Time.values[[0,-1]])
 
@@ -110,42 +115,45 @@ def update_from_file(fname, param1, param2, data_store):
         x = trace['x']
         y = trace['y']
         result = [dict(x=[x], y=[y]), [0]], data_store
+        logging.debug('Updating dashboard')
         return result
     else:
-        print('no need to update')
+        logging.debug('No need to update')
         raise PreventUpdate
 
 def update_datalog_figure(interval, param1, param2, data_store):
-    return update_from_file(os.environ['DATA_LOG'], param1, param2, data_store)
+    return update_from_file(datalog_filename, param1, param2, data_store)
 
+discrete_datalog_filename = f"{os.environ['DATA_PATH']}/{os.environ['DISCRETE_DATA_LOG']}"
 
 def update_discrete_options(url):
-    df = parse_datalog(os.environ['DISCRETE_DATA_LOG'],
+    df = parse_datalog(discrete_datalog_filename,
                 set_time_index=False).drop(
                 columns=['UnixTime', 'DateTime'])
     return get_frame_opts(df)
 
 def initialize_discrete_figure(param1, param2):
-    df = parse_datalog(os.environ['DISCRETE_DATA_LOG'],
+    df = parse_datalog(discrete_datalog_filename,
                 set_time_index=False).drop(
                 columns=['UnixTime', 'DateTime'])
     return plot_parameter(df, param1, param2, default_layout)
 
 
 def update_discrete_figure(interval, param1, param2, data_store):
-    return update_from_file(os.environ['DISCRETE_DATA_LOG'], param1, param2, data_store)
+    return update_from_file(discrete_datalog_filename, param1, param2, data_store)
 
+variable_datalog_filename = f"{os.environ['DATA_PATH']}/{os.environ['VARIABLE_DATA_LOG']}"
 
 def update_variable_options(url):
-    variable = parse_datalog(os.environ['VARIABLE_DATA_LOG'],
+    variable = parse_datalog(variable_datalog_filename,
         set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
     return get_frame_opts(variable)
 
 def initialize_variable_figure(param1, param2):
-    variable = parse_datalog(os.environ['VARIABLE_DATA_LOG'],
+    variable = parse_datalog(variable_datalog_filename,
         set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
     return plot_parameter(variable, param1, param2, default_layout)
 
 def update_variable_figure(interval, param1, param2, data_store):
-    return update_from_file(os.environ['VARIABLE_DATA_LOG'], param1, param2, data_store)
+    return update_from_file(variable_datalog_filename, param1, param2, data_store)
 

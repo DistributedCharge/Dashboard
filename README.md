@@ -44,3 +44,12 @@ These packages are necessary for generating the documentation site.
 * mdxmath - mathematics rendering `pip install python-markdown-math`
 * material theme - `pip install mkdocs-material`
 * jupytext - executable markdown as jupyter notebook `pip install jupytext`
+
+
+## Run (host)
+
+If you installed on your host machine, spin up the dashboard using the following command
+
+```sh
+(dc) python 
+```
