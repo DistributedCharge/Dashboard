@@ -1,3 +1,5 @@
+* got new data streaming
+* make sure you sort the time series before plotting
 
 # 2022-12-15 13:18:58.986512: clock-in
 

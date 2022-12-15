@@ -114,11 +114,11 @@ def update_from_file(fname, param1, param2, data_store):
         trace = fig.data[0].to_plotly_json()
         x = trace['x']
         y = trace['y']
-        result = [dict(x=[x], y=[y]), [0]], data_store
-        logging.debug('Updating dashboard')
+        result = [dict(x=[x], y=[y]), [0], 100], data_store
+        print('Updating dashboard')
         return result
     else:
-        logging.debug('No need to update')
+        print(f'No need to update: {t_i} < {t_f}')
         raise PreventUpdate
 
 def update_datalog_figure(interval, param1, param2, data_store):

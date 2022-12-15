@@ -12,7 +12,7 @@ services:
       dockerfile: dashboard.Dockerfile
     environment:
       DASH_DEBUG: "${DASH_DEBUG:-False}"
-      DATA_PATH: /dashboard/Plots/InputData
+      DATA_PATH: /dashboard/data_files
       DATA_LOG: "${DATA_LOG:-DataLog.txt}"
       DISCRETE_DATA_LOG: "${DISCRETE_DATA_LOG:-DiscreteDataLog.txt}"
       VARIABLE_DATA_LOG: "${VARIABLE_DATA_LOG:-VariableDataLog.txt}"
@@ -38,8 +38,8 @@ services:
       dockerfile: dashboard.Dockerfile
     environment:
       DASH_DEBUG: "${DASH_DEBUG:-False}"
-      DATA_PATH: /dashboard/Plots/InputData
-      READ_DATA_PATH: /dashboard/Plots/InputData
+      DATA_PATH: /dashboard/data_files/
+      READ_DATA_PATH: /dashboard/data_files/
       DATA_LOG: "${DATA_LOG:-DataLog.txt}"
       DISCRETE_DATA_LOG: "${DISCRETE_DATA_LOG:-DiscreteDataLog.txt}"
       VARIABLE_DATA_LOG: "${VARIABLE_DATA_LOG:-VariableDataLog.txt}"
@@ -65,7 +65,7 @@ services:
       dockerfile: dashboard.Dockerfile
     environment:
       DASH_DEBUG: "${DASH_DEBUG:-False}"
-      DATA_PATH: /dashboard/Plots/InputData
+      DATA_PATH: /dashboard/data_files/
       DATA_LOG: "${DATA_LOG:-DataLog.txt}"
       DISCRETE_DATA_LOG: "${DISCRETE_DATA_LOG:-DiscreteDataLog.txt}"
       VARIABLE_DATA_LOG: "${VARIABLE_DATA_LOG:-VariableDataLog.txt}"

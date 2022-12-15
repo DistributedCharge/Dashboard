@@ -51,5 +51,5 @@ These packages are necessary for generating the documentation site.
 If you installed on your host machine, spin up the dashboard using the following command
 
 ```sh
-(dc) python 
+(dc) python dcharge/dashboard/dashboard.py
 ```

@@ -78,7 +78,7 @@ layout:
         id: variable-store
     - dcc.Interval:
         id: update-interval
-        interval: 1000
+        interval: 2000
     # - dbc.Card:
     #     body: True
     #     children:
