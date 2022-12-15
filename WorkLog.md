@@ -1,3 +1,4 @@
+* meeting with Chris Guida
 * got new data streaming
 * make sure you sort the time series before plotting
 
