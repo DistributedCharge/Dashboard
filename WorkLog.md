@@ -1,3 +1,6 @@
+
+# 2022-12-15 13:18:58.986512: clock-in
+
 # 2022-12-15 12:59:18.790109: clock-out
 
 * set up docker compose
