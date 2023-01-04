@@ -1,3 +1,4 @@
+* explaining environment variables
 * sorting by x axis
 
 # 2023-01-04 16:25:47.677573: clock-in
