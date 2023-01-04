@@ -24,6 +24,7 @@ app.run_server:
  host: '0.0.0.0'
  port: 8080
  extra_files:
+   - dashboard.py
    - dashboard.yaml
    - callbacks.py
  debug: ${env:DASH_DEBUG}  # new syntax ${oc.env:DASH_DEBUG, False}
@@ -135,13 +136,15 @@ layout:
         - html.Br:
         - dbc.Row:
             children:
-            - dcc.Graph:
-                id: plot-primary
-                style:
-                  height: 400
-                config: ${plot_config}
-                mathjax: True
-                figure: ${default_figure}
+            - dcc.Loading:
+                children:
+                - dcc.Graph:
+                    id: plot-primary
+                    style:
+                      height: 400
+                    config: ${plot_config}
+                    mathjax: True
+                    figure: ${default_figure}
 
     - dbc.Card:
         body: True
@@ -176,13 +179,15 @@ layout:
         - html.Br:
         - dbc.Row:
             children:
-            - dcc.Graph:
-                id: plot-secondary
-                style:
-                  height: 400
-                config: ${plot_config}
-                mathjax: True
-                figure: ${default_figure}
+            - dcc.Loading:
+                children:
+                - dcc.Graph:
+                    id: plot-secondary
+                    style:
+                      height: 400
+                    config: ${plot_config}
+                    mathjax: True
+                    figure: ${default_figure}
 
     - dbc.Card:
         body: True
@@ -217,13 +222,15 @@ layout:
         - html.Br:
         - dbc.Row:
             children:
-            - dcc.Graph:
-                id: plot-discrete
-                style:
-                  height: 400
-                config: ${plot_config}
-                mathjax: True
-                figure: ${default_figure}
+            - dcc.Loading:
+                children:
+                - dcc.Graph:
+                    id: plot-discrete
+                    style:
+                      height: 400
+                    config: ${plot_config}
+                    mathjax: True
+                    figure: ${default_figure}
 
 
     - dbc.Card:
@@ -259,13 +266,15 @@ layout:
         - html.Br:
         - dbc.Row:
             children:
-            - dcc.Graph:
-                id: plot-variable
-                style:
-                  height: 400
-                config: ${plot_config}
-                mathjax: True
-                figure: ${default_figure}
+            - dcc.Loading:
+                children:
+                - dcc.Graph:
+                    id: plot-variable
+                    style:
+                      height: 400
+                    config: ${plot_config}
+                    mathjax: True
+                    figure: ${default_figure}
 
 
 callbacks:
@@ -367,100 +376,100 @@ callbacks:
     callback: callbacks.update_datalog_figure
 
 
-  ######### plot discrete
-  update_discrete_param1_options:
-    input:
-    - id: url
-      attr: pathname
-    output:
-    - id: discrete_param1
-      attr: options
-    callback: callbacks.update_discrete_options
+  # ######### plot discrete
+  # update_discrete_param1_options:
+  #   input:
+  #   - id: url
+  #     attr: pathname
+  #   output:
+  #   - id: discrete_param1
+  #     attr: options
+  #   callback: callbacks.update_discrete_options
 
-  update_discrete_param2_options:
-    input:
-    - id: url
-      attr: pathname
-    output:
-    - id: discrete_param2
-      attr: options
-    callback: callbacks.update_discrete_options
+  # update_discrete_param2_options:
+  #   input:
+  #   - id: url
+  #     attr: pathname
+  #   output:
+  #   - id: discrete_param2
+  #     attr: options
+  #   callback: callbacks.update_discrete_options
 
-  initialize_discrete_figure:
-    input:
-    - id: discrete_param1
-      attr: value
-    - id: discrete_param2
-      attr: value
-    output:
-    - id: plot-discrete
-      attr: figure
-    callback: callbacks.initialize_discrete_figure
+  # initialize_discrete_figure:
+  #   input:
+  #   - id: discrete_param1
+  #     attr: value
+  #   - id: discrete_param2
+  #     attr: value
+  #   output:
+  #   - id: plot-discrete
+  #     attr: figure
+  #   callback: callbacks.initialize_discrete_figure
 
-  update_discrete_figure:
-    input:
-    - id: update-interval
-      attr: n_intervals
-    - id: discrete_param1
-      attr: value
-    - id: discrete_param2
-      attr: value
-    state:
-    - id: discrete-store
-      attr: data
-    output:
-    - id: plot-discrete
-      attr: extendData
-    - id: discrete-store
-      attr: data
-    callback: callbacks.update_discrete_figure
+  # update_discrete_figure:
+  #   input:
+  #   - id: update-interval
+  #     attr: n_intervals
+  #   - id: discrete_param1
+  #     attr: value
+  #   - id: discrete_param2
+  #     attr: value
+  #   state:
+  #   - id: discrete-store
+  #     attr: data
+  #   output:
+  #   - id: plot-discrete
+  #     attr: extendData
+  #   - id: discrete-store
+  #     attr: data
+  #   callback: callbacks.update_discrete_figure
 
-  ########## plot variable
-  update_variable_param1_options:
-    input:
-    - id: url
-      attr: pathname
-    output:
-    - id: variable_param1
-      attr: options
-    callback: callbacks.update_variable_options
+  # ########## plot variable
+  # update_variable_param1_options:
+  #   input:
+  #   - id: url
+  #     attr: pathname
+  #   output:
+  #   - id: variable_param1
+  #     attr: options
+  #   callback: callbacks.update_variable_options
 
-  update_variable_param2_options:
-    input:
-    - id: url
-      attr: pathname
-    output:
-    - id: variable_param2
-      attr: options
-    callback: callbacks.update_variable_options
+  # update_variable_param2_options:
+  #   input:
+  #   - id: url
+  #     attr: pathname
+  #   output:
+  #   - id: variable_param2
+  #     attr: options
+  #   callback: callbacks.update_variable_options
 
-  initialize_variable_figure:
-    input:
-    - id: variable_param1
-      attr: value
-    - id: variable_param2
-      attr: value
-    output:
-    - id: plot-variable
-      attr: figure
-    callback: callbacks.initialize_variable_figure
+  # initialize_variable_figure:
+  #   input:
+  #   - id: variable_param1
+  #     attr: value
+  #   - id: variable_param2
+  #     attr: value
+  #   output:
+  #   - id: plot-variable
+  #     attr: figure
+  #   callback: callbacks.initialize_variable_figure
 
 
-  update_variable_figure:
-    input:
-    - id: update-interval
-      attr: n_intervals
-    - id: variable_param1
-      attr: value
-    - id: variable_param2
-      attr: value
-    state:
-    - id: variable-store
-      attr: data
-    output:
-    - id: plot-variable
-      attr: extendData
-    - id: variable-store
-      attr: data
-    callback: callbacks.update_variable_figure
+  # update_variable_figure:
+  #   input:
+  #   - id: update-interval
+  #     attr: n_intervals
+  #   - id: variable_param1
+  #     attr: value
+  #   - id: variable_param2
+  #     attr: value
+  #   state:
+  #   - id: variable-store
+  #     attr: data
+  #   output:
+  #   - id: plot-variable
+  #     attr: extendData
+  #   - id: variable-store
+  #     attr: data
+  #   callback: callbacks.update_variable_figure
 

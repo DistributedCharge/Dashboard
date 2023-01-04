@@ -1,3 +1,4 @@
+* loading component, establishing data_files dir
 * explaining environment variables
 * sorting by x axis
 
