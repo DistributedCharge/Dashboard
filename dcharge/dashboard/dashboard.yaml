@@ -30,10 +30,12 @@ app.run_server:
  dev_tools_hot_reload: True
 
 plot_config:
-  responsive: False
+  responsive: True
   autosizable: True
   # doubleClick: False
   displayModeBar: True
+  displaylogo: False
+
 
 default_layout:
   paper_bgcolor: black
@@ -267,22 +269,6 @@ layout:
 
 
 callbacks:
-  # update_plot_test: # test sin function
-  #   input:
-  #   - id: update-interval
-  #     attr: n_intervals
-  #   - id: test-period
-  #     attr: value
-  #   state:
-  #   - id: plot-test-store
-  #     attr: data
-  #   output:
-  #   - id: plot-test
-  #     attr: extendData
-  #   - id: plot-test-store
-  #     attr: data
-  #   callback: callbacks.update_plot_test
-
   ############ plot 1 ##########
   update_parameter1_options:
     input:

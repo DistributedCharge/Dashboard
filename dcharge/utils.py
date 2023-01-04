@@ -37,6 +37,7 @@ def plot_parameter(df, param1, param2, layout_params):
         mode = 'lines'
     else:
         mode = 'markers'
+    df.sort_values(param2, inplace=True)
     layout = go.Layout(
         xaxis=dict(title=param2),
         yaxis=dict(title=param1),
