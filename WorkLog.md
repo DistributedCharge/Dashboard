@@ -1,3 +1,5 @@
+# 2023-01-04 17:29:54.854504: clock-out
+
 * loading component, establishing data_files dir
 * explaining environment variables
 * sorting by x axis
