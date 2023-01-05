@@ -33,6 +33,8 @@ services:
 
   simulator:
     image: dcharge-dashboard
+    depends_on:
+    - dashboard
     build:
       context: .
       dockerfile: dashboard.Dockerfile

@@ -1,3 +1,4 @@
+* streaming variable and discrete
 
 # 2023-01-05 08:46:02.120112: clock-in
 

@@ -2,19 +2,57 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
 
-def parse_datalog(fname, set_time_index=True):
+
+import mmap
+import os
+
+import mmap
+import os
+
+
+def tail(f, window=20):
+    """Returns the last `window` lines of file `f` as a list.
+    """
+    if window == 0:
+        return []
+
+    BUFSIZ = 1024
+    f.seek(0, 2)
+    remaining_bytes = f.tell()
+    size = window + 1
+    block = -1
+    data = []
+
+    while size > 0 and remaining_bytes > 0:
+        if remaining_bytes - BUFSIZ > 0:
+            # Seek back one whole BUFSIZ
+            f.seek(block * BUFSIZ, 2)
+            # read BUFFER
+            bunch = f.read(BUFSIZ)
+        else:
+            # file too small, start from beginning
+            f.seek(0, 0)
+            # only read what was not read
+            bunch = f.read(remaining_bytes)
+
+        bunch = bunch.decode('utf-8')
+        data.insert(0, bunch)
+        size -= bunch.count('\n')
+        remaining_bytes -= BUFSIZ
+        block -= 1
+
+    return ''.join(data).splitlines()[-window:]
+
+def parse_datalog(fname, data_limit, set_time_index=False):
+
     lines = []
-    with open(fname) as f:
-        for i, line in enumerate(f):
-            current = line.strip().split('\t')
-            if i == 0:
-                columns = current
-                ncols = len(current)
-            else:
-                if len(current) != ncols:
-                    print(f'problem at line {i}')
-                    raise IOError(f'line of length {len(current)} does not match {ncols} cols:{columns} {current}')
-                lines.append(current)
+    with open(fname, 'rb') as f:
+        line = f.readline().decode("utf-8")
+        columns = line.strip().split('\t')
+        ncols = len(columns)
+        lines = tail(f, data_limit)
+        
+    lines = [line.strip().split('\t') for line in lines]
 
     df = pd.DataFrame(lines, columns=columns)
     df = df.replace(',', '', regex=True)
@@ -30,6 +68,7 @@ def parse_datalog(fname, set_time_index=True):
     if set_time_index:
         df.set_index('Time', inplace=True)
     return df
+
 
 def plot_parameter(df, param1, param2, layout_params):
     """plots param1 vs param2"""
