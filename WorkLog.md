@@ -1,3 +1,6 @@
+
+# 2023-01-05 08:46:02.120112: clock-in
+
 # 2023-01-04 17:29:54.854504: clock-out
 
 * loading component, establishing data_files dir
