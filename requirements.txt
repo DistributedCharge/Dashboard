@@ -4,3 +4,4 @@ numpy
 dash
 git+https://github.com/predsci/psidash.git
 python-dotenv
+dash-bootstrap-components

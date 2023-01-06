@@ -1,14 +1,13 @@
-FROM continuumio/miniconda3:latest
+FROM ubuntu:20.04
 LABEL maintainer "Asher Pembroke <apembroke@predsci.com>"
 
-RUN conda config --add channels conda-forge
+RUN apt update
+RUN apt install -y python3-pip git
 
-RUN conda install python=3.7
 
-RUN conda install jupyter jupytext
+# extra stuff for debugging (remove after in full production)
+RUN apt install -y htop traceroute iproute2 iputils-ping
 
-RUN pip install --user git+https://github.com/predsci/psidash.git
-RUN pip install dash-bootstrap-components
 
 ADD . /dashboard
 
