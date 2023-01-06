@@ -57,10 +57,6 @@ Available columns in datalog file
 ```
 
 ```python
-cat ../Plots/InputData/DataLog.txt
-```
-
-```python
 fname = '../Plots/InputData/DataLog.txt'
 ```
 
@@ -73,7 +69,70 @@ from dcharge.utils import parse_datalog
 ```
 
 ```python
-datalog = parse_datalog(fname)
+import mmap
+import os
+
+
+# def tail(f, window=20):
+#     """Returns the last `window` lines of file `f` as a list.
+#     """
+#     if window == 0:
+#         return []
+
+#     BUFSIZ = 1024
+#     f.seek(0, 2)
+#     remaining_bytes = f.tell()
+#     size = window + 1
+#     block = -1
+#     data = []
+
+#     while size > 0 and remaining_bytes > 0:
+#         if remaining_bytes - BUFSIZ > 0:
+#             # Seek back one whole BUFSIZ
+#             f.seek(block * BUFSIZ, 2)
+#             # read BUFFER
+#             bunch = f.read(BUFSIZ)
+#         else:
+#             # file too small, start from beginning
+#             f.seek(0, 0)
+#             # only read what was not read
+#             bunch = f.read(remaining_bytes)
+
+#         bunch = bunch.decode('utf-8')
+#         data.insert(0, bunch)
+#         size -= bunch.count('\n')
+#         remaining_bytes -= BUFSIZ
+#         block -= 1
+
+#     return ''.join(data).splitlines()[-window:]
+
+# def parse_datalog(fname, data_limit, set_time_index=False):
+
+#     lines = []
+#     with open(fname, 'rb') as f:
+#         line = f.readline().decode("utf-8")
+#         columns = line.strip().split('\t')
+#         ncols = len(columns)
+#         lines = tail(f, data_limit)
+        
+#     lines = [line.strip().split('\t') for line in lines]
+
+#     df = pd.DataFrame(lines, columns=columns)
+#     df = df.replace(',', '', regex=True)
+
+#     for c in columns:
+#         try:
+#             df[c] = pd.to_numeric(df[c])
+#             df[c].replace({-1.0: np.NaN}, inplace=True)
+#         except:
+#             pass
+
+#     df['Time'] = pd.to_datetime(df.UnixTime, unit='s')
+#     if set_time_index:
+#         df.set_index('Time', inplace=True)
+#     return df
+
+datalog = parse_datalog(fname, data_limit=500)
 
 datalog
 ```
@@ -84,8 +143,12 @@ datalog
 I'm not sure where the last column gets generated
 
 ```python
-discrete = parse_datalog(os.environ['DISCRETE_DATA_LOG'],
+discrete = parse_datalog(f"../data_files/{os.environ['DISCRETE_DATA_LOG']}", data_limit=100,
     set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
+```
+
+```python
+discrete
 ```
 
 ```python

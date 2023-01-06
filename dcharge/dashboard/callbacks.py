@@ -71,35 +71,28 @@ def update_plot_test(interval, period, data_store):
 
 datalog_filename = f"{os.environ['DATA_PATH']}/{os.environ['DATA_LOG']}"
 
-def update_parameter_options(url):
-    """sets parameters for figures 1 and 2"""
-    
-    datalog = parse_datalog(datalog_filename,
-        set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
-    return get_frame_opts(datalog)
-
-
-def initialize_datalog_figure(param1, param2):
+def initialize_datalog_figure(param1, param2, data_limit):
     """initializes figures 1 and 2"""
-    datalog = parse_datalog(datalog_filename,
-        set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
+    datalog = parse_datalog(datalog_filename, data_limit,
+        set_time_index=False).drop(columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
     # print('initial datalog range:', datalog.Time.values[[0,-1]])
 
     fig = plot_parameter(datalog, param1, param2, default_layout)
-    return fig # dict(range=datalog['Time'].values[[0,-1]])
+    parameter_options = get_frame_opts(datalog)
+    return fig, parameter_options, parameter_options
 
 
-def update_from_file(fname, param1, param2, data_store):
+def update_from_file(fname, param1, param2, data_store, data_limit):
     if data_store is None:
         # load current datalog file
-        df = parse_datalog(fname,
+        df = parse_datalog(fname, data_limit,
             set_time_index=False).drop(
-            columns=['UnixTime', 'DateTime'])
+            columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
         t_i, t_f = df.Time.values[[0,-1]]
         data_store = dict(t_final=t_f)
     else:
         # load current datalog file (it may have been updated)
-        df = parse_datalog(fname,
+        df = parse_datalog(fname, data_limit,
             set_time_index=False).drop(
             columns=['UnixTime', 'DateTime'])
         t_i = pd.to_datetime(data_store['t_final'])
@@ -114,46 +107,48 @@ def update_from_file(fname, param1, param2, data_store):
         trace = fig.data[0].to_plotly_json()
         x = trace['x']
         y = trace['y']
-        result = [dict(x=[x], y=[y]), [0], 100], data_store
+        result = [dict(x=[x], y=[y]), [0], data_limit], data_store
         print('Updating dashboard')
         return result
     else:
-        print(f'No need to update: {t_i} < {t_f}')
+        print(f'No need to update: {t_i} <= {t_f}')
         raise PreventUpdate
 
-def update_datalog_figure(interval, param1, param2, data_store):
-    return update_from_file(datalog_filename, param1, param2, data_store)
+def update_datalog_figure(interval, param1, param2, data_limit, data_store):
+    return update_from_file(datalog_filename, param1, param2, data_store, data_limit)
 
 discrete_datalog_filename = f"{os.environ['DATA_PATH']}/{os.environ['DISCRETE_DATA_LOG']}"
 
-def update_discrete_options(url):
-    df = parse_datalog(discrete_datalog_filename,
+# def update_discrete_options(url):
+#     df = parse_datalog(discrete_datalog_filename,
+#                 set_time_index=False).drop(
+#                 columns=['UnixTime', 'DateTime'])
+#     return get_frame_opts(df)
+
+def initialize_discrete_figure(param1, param2, data_limit):
+    df = parse_datalog(discrete_datalog_filename, data_limit,
                 set_time_index=False).drop(
-                columns=['UnixTime', 'DateTime'])
-    return get_frame_opts(df)
-
-def initialize_discrete_figure(param1, param2):
-    df = parse_datalog(discrete_datalog_filename,
-                set_time_index=False).drop(
-                columns=['UnixTime', 'DateTime'])
-    return plot_parameter(df, param1, param2, default_layout)
+                columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
+    parameter_options = get_frame_opts(df)
+    return plot_parameter(df, param1, param2, default_layout), parameter_options, parameter_options
 
 
-def update_discrete_figure(interval, param1, param2, data_store):
-    return update_from_file(discrete_datalog_filename, param1, param2, data_store)
+def update_discrete_figure(interval, param1, param2, data_limit, data_store):
+    return update_from_file(discrete_datalog_filename, param1, param2, data_store, data_limit)
 
 variable_datalog_filename = f"{os.environ['DATA_PATH']}/{os.environ['VARIABLE_DATA_LOG']}"
 
-def update_variable_options(url):
-    variable = parse_datalog(variable_datalog_filename,
-        set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
-    return get_frame_opts(variable)
+# def update_variable_options(url):
+#     variable = parse_datalog(variable_datalog_filename,
+#         set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
+#     return get_frame_opts(variable)
 
-def initialize_variable_figure(param1, param2):
-    variable = parse_datalog(variable_datalog_filename,
-        set_time_index=False).drop(columns=['UnixTime', 'DateTime'])
-    return plot_parameter(variable, param1, param2, default_layout)
+def initialize_variable_figure(param1, param2, data_limit):
+    variable = parse_datalog(variable_datalog_filename, data_limit,
+        set_time_index=False).drop(columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
+    parameter_options = get_frame_opts(variable)
+    return plot_parameter(variable, param1, param2, default_layout), parameter_options, parameter_options
 
-def update_variable_figure(interval, param1, param2, data_store):
-    return update_from_file(variable_datalog_filename, param1, param2, data_store)
+def update_variable_figure(interval, param1, param2, data_limit, data_store):
+    return update_from_file(variable_datalog_filename, param1, param2, data_store, data_limit)
 
