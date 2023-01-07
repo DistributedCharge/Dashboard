@@ -1,3 +1,6 @@
+
+# 2023-01-07 14:56:10.498618: clock-in
+
 # 2023-01-05 11:13:08.865142: clock-out: T-15m 
 
 * streaming variable and discrete
