@@ -1,3 +1,4 @@
+* presets and cosmetic improvements
 * merging work from raspi branch
 
 # 2023-01-07 14:56:10.498618: clock-in

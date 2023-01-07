@@ -57,7 +57,7 @@ Available columns in datalog file
 ```
 
 ```python
-fname = '../Plots/InputData/DataLog.txt'
+pwd
 ```
 
 ```python
@@ -69,70 +69,109 @@ from dcharge.utils import parse_datalog
 ```
 
 ```python
-import mmap
-import os
+fname
+```
 
+```python
+from dcharge.dashboard.callbacks import datalog_filename
+from dcharge.utils import tail
+```
 
-# def tail(f, window=20):
-#     """Returns the last `window` lines of file `f` as a list.
-#     """
-#     if window == 0:
-#         return []
+```python
+from dcharge.dashboard.callbacks import initialize_datalog_figure, get_frame_opts
+```
 
-#     BUFSIZ = 1024
-#     f.seek(0, 2)
-#     remaining_bytes = f.tell()
-#     size = window + 1
-#     block = -1
-#     data = []
+```python
+get_frame_opts(datalog)
+```
 
-#     while size > 0 and remaining_bytes > 0:
-#         if remaining_bytes - BUFSIZ > 0:
-#             # Seek back one whole BUFSIZ
-#             f.seek(block * BUFSIZ, 2)
-#             # read BUFFER
-#             bunch = f.read(BUFSIZ)
-#         else:
-#             # file too small, start from beginning
-#             f.seek(0, 0)
-#             # only read what was not read
-#             bunch = f.read(remaining_bytes)
+```python
+fig, optx, opty = initialize_datalog_figure('Power[W]', 'Time', 100)
+```
 
-#         bunch = bunch.decode('utf-8')
-#         data.insert(0, bunch)
-#         size -= bunch.count('\n')
-#         remaining_bytes -= BUFSIZ
-#         block -= 1
+```python
+from omegaconf import OmegaConf
+```
 
-#     return ''.join(data).splitlines()[-window:]
+```python
+OmegaConf.
+```
 
-# def parse_datalog(fname, data_limit, set_time_index=False):
+```python
+import yaml
+```
 
-#     lines = []
-#     with open(fname, 'rb') as f:
-#         line = f.readline().decode("utf-8")
-#         columns = line.strip().split('\t')
-#         ncols = len(columns)
-#         lines = tail(f, data_limit)
-        
-#     lines = [line.strip().split('\t') for line in lines]
+```python
+print(yaml.dump(optx))
+```
 
-#     df = pd.DataFrame(lines, columns=columns)
-#     df = df.replace(',', '', regex=True)
+```python
+time
+session time
+sale period time remaining
+```
 
-#     for c in columns:
-#         try:
-#             df[c] = pd.to_numeric(df[c])
-#             df[c].replace({-1.0: np.NaN}, inplace=True)
-#         except:
-#             pass
+```python
+datalog_filename
+```
 
-#     df['Time'] = pd.to_datetime(df.UnixTime, unit='s')
-#     if set_time_index:
-#         df.set_index('Time', inplace=True)
-#     return df
+```python
+fname = '../data_files/DataLog.txt'
+```
 
-datalog = parse_datalog(fname, data_limit=500)
+```python
+data_limit = 10
+```
+
+```python
+set_time_index=False
+```
+
+```python
+lines = []
+with open(fname, 'rb') as f:
+    line = f.readline().decode("utf-8")
+    columns = line.strip().split('\t')
+    ncols = len(columns)
+    lines = tail(f, data_limit)
+
+lines = [line.strip().split('\t') for line in lines]
+
+df = pd.DataFrame(lines, columns=columns)
+df = df.replace(',', '', regex=True)
+
+for c in columns:
+    try:
+        df[c] = pd.to_numeric(df[c])
+        df[c].replace({-1.0: np.NaN}, inplace=True)
+    except:
+        pass
+
+df['Time'] = pd.to_datetime(df.UnixTime, unit='s')
+if set_time_index:
+    df.set_index('Time', inplace=True)
+
+```
+
+```python
+df.columns
+```
+
+```python
+def assign_credit(df):
+    return df.assign(Credit=df['TotalPaymentAmount[sats]'] - df['EnergyCost'])
+```
+
+```python
+df.assign(cost=df)
+```
+
+```python
+df
+```
+
+```python
+datalog = parse_datalog(fname, data_limit=10)
 
 datalog
 ```

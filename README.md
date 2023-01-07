@@ -4,6 +4,24 @@
 This dashboard visualizes meter data and metrics in real time.
 
 
+## Setup (docker)
+
+Run the production version with
+
+```console
+docker compose up
+```
+
+Run the dev version with
+
+```console
+docker compose -f docker-compose-dev.yml up dashboard simulator
+```
+
+That runs the dashboard in debug mode along with the simulator. See below for setting up data paths.
+
+
+
 ## Setup (conda)
 
 This project may be set up with a miniconda environment, which is a stripped-down version of anaconda.

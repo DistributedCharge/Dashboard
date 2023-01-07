@@ -1,0 +1,55 @@
+version: '2.4'
+
+services:
+  notebook: # jupyter notebook environment
+    image: dashboard-dev
+    ports:
+      - "8888:8888"
+    build: 
+      context: .
+      dockerfile: dashboard-dev.Dockerfile
+    environment:
+      DASH_DEBUG: "${DASH_DEBUG:-False}"
+      DATA_PATH: /dashboard/data_files
+      DATA_LOG: "${DATA_LOG:-DataLog.txt}"
+      DISCRETE_DATA_LOG: "${DISCRETE_DATA_LOG:-DiscreteDataLog.txt}"
+      VARIABLE_DATA_LOG: "${VARIABLE_DATA_LOG:-VariableDataLog.txt}"
+    volumes:
+      - type: bind
+        source: .
+        target: /dashboard
+    working_dir: /dashboard
+    container_name: dcharge-notebook
+    command:
+      - jupyter
+      - notebook
+      - .
+      - --port=8888
+      - --no-browser
+      - --ip=0.0.0.0
+      - --allow-root
+
+  simulator:
+    image: dcharge-dashboard
+    build:
+      context: .
+      dockerfile: dashboard-dev.Dockerfile
+    environment:
+      DASH_DEBUG: "${DASH_DEBUG:-False}"
+      DATA_PATH: /dashboard/data_files/
+      READ_DATA_PATH: /dashboard/data_files/
+      DATA_LOG: "${DATA_LOG:-DataLog.txt}"
+      DISCRETE_DATA_LOG: "${DISCRETE_DATA_LOG:-DiscreteDataLog.txt}"
+      VARIABLE_DATA_LOG: "${VARIABLE_DATA_LOG:-VariableDataLog.txt}"
+      READ_DATA_LOG: "${READ_DATA_LOG}"
+      READ_DISCRETE_DATA_LOG: "${READ_DISCRETE_DATA_LOG}"
+      READ_VARIABLE_DATA_LOG: "${READ_VARIABLE_DATA_LOG}"
+    volumes:
+    - type: bind
+      source: .
+      target: /dashboard
+    container_name: dcharge-simulator
+    command:
+      - python3
+      - stream_datalog.py
+    working_dir: /dashboard
