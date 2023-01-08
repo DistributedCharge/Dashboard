@@ -11,7 +11,7 @@ services:
       context: .
       dockerfile: dashboard.Dockerfile
     environment:
-      DASH_DEBUG: False
+      DASH_DEBUG: "False"
       DATA_PATH: /dashboard/data_files/
       DATA_LOG: "${DATA_LOG:-DataLog.txt}"
       DISCRETE_DATA_LOG: "${DISCRETE_DATA_LOG:-DiscreteDataLog.txt}"
