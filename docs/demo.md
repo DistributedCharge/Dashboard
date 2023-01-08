@@ -69,24 +69,71 @@ from dcharge.utils import parse_datalog
 ```
 
 ```python
-fname
-```
-
-```python
 from dcharge.dashboard.callbacks import datalog_filename
 from dcharge.utils import tail
 ```
 
 ```python
-from dcharge.dashboard.callbacks import initialize_datalog_figure, get_frame_opts
+from dcharge.dashboard.callbacks import initialize_datalog_figure, get_frame_opts, default_layout
 ```
 
 ```python
-get_frame_opts(datalog)
+
 ```
 
 ```python
-fig, optx, opty = initialize_datalog_figure('Power[W]', 'Time', 100)
+from plotly.subplots import make_subplots
+
+def plot_parameter(df, param1, param2, layout_params):
+    """plots param1 vs param2"""
+    if param2 == 'Time':
+        mode = 'lines'
+    else:
+        mode = 'markers'
+    df.sort_values(param2, inplace=True)
+    layout = go.Layout(
+        xaxis=dict(title=param2),
+        yaxis=dict(title=param1),
+        **layout_params)
+
+    fig = go.Figure(go.Scatter(
+                    x=df[param2],
+                    y=df[param1],
+                    name=param1,
+                    mode=mode),
+                layout=layout)
+    return fig
+
+def initialize_datalog_figure(param_y, param_x, data_limit):
+    """initializes figures 1 and 2"""
+    datalog = parse_datalog(datalog_filename, data_limit,
+        set_time_index=False).drop(columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
+    # print('initial datalog range:', datalog.Time.values[[0,-1]])
+    if isinstance(param_y, str):
+        fig = plot_parameter(datalog, param_y, param_x, default_layout)
+        return fig
+    
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    for i, _ in enumerate(param_y):
+        secondary_y = (i%2 == 0) # see if this trace is even
+        fig_ = plot_parameter(datalog, _, param_x, default_layout)
+        fig.add_trace(fig_.data[0], secondary_y=secondary_y)
+        fig.update_yaxes(title_text=_, secondary_y=secondary_y)
+
+    fig.update_layout(**default_layout)
+    return fig
+
+```
+
+```python
+fig = initialize_datalog_figure('Power[W]', 'Time', 100)
+
+fig
+```
+
+```python
+fig = initialize_datalog_figure(['Power[W]', 'Volts'], 'Time', 100)
+fig
 ```
 
 ```python

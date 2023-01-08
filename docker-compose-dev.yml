@@ -53,3 +53,27 @@ services:
       - python3
       - stream_datalog.py
     working_dir: /dashboard
+
+  dashboard:
+    image: dcharge-dashboard
+    ports:
+      - "80:8080"
+    build:
+      context: .
+      dockerfile: dashboard.Dockerfile
+    environment:
+      DASH_DEBUG: True
+      DATA_PATH: /dashboard/data_files/
+      DATA_LOG: "${DATA_LOG:-DataLog.txt}"
+      DISCRETE_DATA_LOG: "${DISCRETE_DATA_LOG:-DiscreteDataLog.txt}"
+      VARIABLE_DATA_LOG: "${VARIABLE_DATA_LOG:-VariableDataLog.txt}"
+    volumes:
+      - type: bind
+        source: .
+        target: /dashboard
+    container_name: dcharge-dashboard
+    command:
+      - python3
+      - dashboard.py
+    working_dir: /dashboard/dcharge/dashboard
+

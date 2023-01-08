@@ -129,6 +129,11 @@ presets:
     value: Rate[sat/Wh]_Time
   - label: Max Authorized Rate vs Time
     value: MaxAuthorizedRate[sat/Wh]_Time
+  - label: Total Payment Amount vs Time
+    value: TotalPaymentAmount[sats]_Time
+  - label: Energy Cost vs Time
+    value: EnergyCost_Time
+# Total Payment Amount vs time AND Energy Cost vs time
 
 layout:
   # # Trying to point to mathjax to convert latex to readable format, but see https://dash.plotly.com/dash-html-components/script and https://docs.mathjax.org/en/v2.7-latest/start.html
@@ -185,6 +190,7 @@ layout:
                     - dcc.Dropdown:
                         id: param1
                         clearable: False
+                        multi: True
                         value: Power[W]
                         options: ${y_options}
               - dbc.Col:
@@ -253,11 +259,13 @@ layout:
               - dbc.Col:
                   width: 2
                   children:
-                    dcc.Dropdown:
-                      id: param3
-                      clearable: False
-                      value: Power[W]
-                      options: ${y_options}
+                    - dbc.Label: y-axis
+                    - dcc.Dropdown:
+                        id: param3
+                        clearable: False
+                        multi: True
+                        value: Power[W]
+                        options: ${y_options}
               - dbc.Col:
                   width: 1
                   children:
@@ -268,11 +276,12 @@ layout:
               - dbc.Col:
                   width: 2
                   children:
-                    dcc.Dropdown:
-                      id: param4
-                      clearable: False
-                      value: Rate[sat/Wh]
-                      options: ${x_options}
+                    - dbc.Label: x-axis
+                    - dcc.Dropdown:
+                        id: param4
+                        clearable: False
+                        value: Rate[sat/Wh]
+                        options: ${x_options}
         - html.Br:
         - dbc.Row:
             children:
