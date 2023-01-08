@@ -1,0 +1,14 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.env
+
+# these are changed frequently during rebuilds but are not used by the container
+docker-compose*.yml
+
+*.Dockerfile
+
+# hourly time tracking
+hourly-outputs

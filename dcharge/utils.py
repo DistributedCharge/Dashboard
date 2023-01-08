@@ -43,6 +43,9 @@ def tail(f, window=20):
 
     return ''.join(data).splitlines()[-window:]
 
+def assign_credit(df):
+    return df.assign(**{'Credit[sats]': df['TotalPaymentAmount[sats]'] - df['EnergyCost']})
+
 def parse_datalog(fname, data_limit, set_time_index=False):
 
     lines = []
@@ -67,6 +70,9 @@ def parse_datalog(fname, data_limit, set_time_index=False):
     df['Time'] = pd.to_datetime(df.UnixTime, unit='s')
     if set_time_index:
         df.set_index('Time', inplace=True)
+
+    df = assign_credit(df)
+
     return df
 
 

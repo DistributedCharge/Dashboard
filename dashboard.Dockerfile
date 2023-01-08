@@ -8,11 +8,16 @@ RUN apt install -y python3-pip git
 # extra stuff for debugging (remove after in full production)
 RUN apt install -y htop traceroute iproute2 iputils-ping
 
-
-ADD . /dashboard
+# copy just the dependencies for faster dev builds
+COPY requirements.txt /dashboard/requirements.txt
 
 WORKDIR /dashboard
 
 RUN pip install -r requirements.txt
 
+# add everything else
+ADD . /dashboard
+
+
+# install in editable mode so code changes are live
 RUN pip install -e .

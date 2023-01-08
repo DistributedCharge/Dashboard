@@ -57,7 +57,7 @@ Available columns in datalog file
 ```
 
 ```python
-fname = '../Plots/InputData/DataLog.txt'
+pwd
 ```
 
 ```python
@@ -69,70 +69,156 @@ from dcharge.utils import parse_datalog
 ```
 
 ```python
-import mmap
-import os
+from dcharge.dashboard.callbacks import datalog_filename
+from dcharge.utils import tail
+```
 
+```python
+from dcharge.dashboard.callbacks import initialize_datalog_figure, get_frame_opts, default_layout
+```
 
-# def tail(f, window=20):
-#     """Returns the last `window` lines of file `f` as a list.
-#     """
-#     if window == 0:
-#         return []
+```python
 
-#     BUFSIZ = 1024
-#     f.seek(0, 2)
-#     remaining_bytes = f.tell()
-#     size = window + 1
-#     block = -1
-#     data = []
+```
 
-#     while size > 0 and remaining_bytes > 0:
-#         if remaining_bytes - BUFSIZ > 0:
-#             # Seek back one whole BUFSIZ
-#             f.seek(block * BUFSIZ, 2)
-#             # read BUFFER
-#             bunch = f.read(BUFSIZ)
-#         else:
-#             # file too small, start from beginning
-#             f.seek(0, 0)
-#             # only read what was not read
-#             bunch = f.read(remaining_bytes)
+```python
+from plotly.subplots import make_subplots
 
-#         bunch = bunch.decode('utf-8')
-#         data.insert(0, bunch)
-#         size -= bunch.count('\n')
-#         remaining_bytes -= BUFSIZ
-#         block -= 1
+def plot_parameter(df, param1, param2, layout_params):
+    """plots param1 vs param2"""
+    if param2 == 'Time':
+        mode = 'lines'
+    else:
+        mode = 'markers'
+    df.sort_values(param2, inplace=True)
+    layout = go.Layout(
+        xaxis=dict(title=param2),
+        yaxis=dict(title=param1),
+        **layout_params)
 
-#     return ''.join(data).splitlines()[-window:]
+    fig = go.Figure(go.Scatter(
+                    x=df[param2],
+                    y=df[param1],
+                    name=param1,
+                    mode=mode),
+                layout=layout)
+    return fig
 
-# def parse_datalog(fname, data_limit, set_time_index=False):
+def initialize_datalog_figure(param_y, param_x, data_limit):
+    """initializes figures 1 and 2"""
+    datalog = parse_datalog(datalog_filename, data_limit,
+        set_time_index=False).drop(columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
+    # print('initial datalog range:', datalog.Time.values[[0,-1]])
+    if isinstance(param_y, str):
+        fig = plot_parameter(datalog, param_y, param_x, default_layout)
+        return fig
+    
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    for i, _ in enumerate(param_y):
+        secondary_y = (i%2 == 0) # see if this trace is even
+        fig_ = plot_parameter(datalog, _, param_x, default_layout)
+        fig.add_trace(fig_.data[0], secondary_y=secondary_y)
+        fig.update_yaxes(title_text=_, secondary_y=secondary_y)
 
-#     lines = []
-#     with open(fname, 'rb') as f:
-#         line = f.readline().decode("utf-8")
-#         columns = line.strip().split('\t')
-#         ncols = len(columns)
-#         lines = tail(f, data_limit)
-        
-#     lines = [line.strip().split('\t') for line in lines]
+    fig.update_layout(**default_layout)
+    return fig
 
-#     df = pd.DataFrame(lines, columns=columns)
-#     df = df.replace(',', '', regex=True)
+```
 
-#     for c in columns:
-#         try:
-#             df[c] = pd.to_numeric(df[c])
-#             df[c].replace({-1.0: np.NaN}, inplace=True)
-#         except:
-#             pass
+```python
+fig = initialize_datalog_figure('Power[W]', 'Time', 100)
 
-#     df['Time'] = pd.to_datetime(df.UnixTime, unit='s')
-#     if set_time_index:
-#         df.set_index('Time', inplace=True)
-#     return df
+fig
+```
 
-datalog = parse_datalog(fname, data_limit=500)
+```python
+fig = initialize_datalog_figure(['Power[W]', 'Volts'], 'Time', 100)
+fig
+```
+
+```python
+from omegaconf import OmegaConf
+```
+
+```python
+OmegaConf.
+```
+
+```python
+import yaml
+```
+
+```python
+print(yaml.dump(optx))
+```
+
+```python
+time
+session time
+sale period time remaining
+```
+
+```python
+datalog_filename
+```
+
+```python
+fname = '../data_files/DataLog.txt'
+```
+
+```python
+data_limit = 10
+```
+
+```python
+set_time_index=False
+```
+
+```python
+lines = []
+with open(fname, 'rb') as f:
+    line = f.readline().decode("utf-8")
+    columns = line.strip().split('\t')
+    ncols = len(columns)
+    lines = tail(f, data_limit)
+
+lines = [line.strip().split('\t') for line in lines]
+
+df = pd.DataFrame(lines, columns=columns)
+df = df.replace(',', '', regex=True)
+
+for c in columns:
+    try:
+        df[c] = pd.to_numeric(df[c])
+        df[c].replace({-1.0: np.NaN}, inplace=True)
+    except:
+        pass
+
+df['Time'] = pd.to_datetime(df.UnixTime, unit='s')
+if set_time_index:
+    df.set_index('Time', inplace=True)
+
+```
+
+```python
+df.columns
+```
+
+```python
+def assign_credit(df):
+    return df.assign(Credit=df['TotalPaymentAmount[sats]'] - df['EnergyCost'])
+```
+
+```python
+df.assign(cost=df)
+```
+
+```python
+df
+```
+
+```python
+datalog = parse_datalog(fname, data_limit=10)
 
 datalog
 ```
