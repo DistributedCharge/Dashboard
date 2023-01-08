@@ -146,8 +146,8 @@ layout:
     - dcc.Location:
         id: url
         refresh: False
-    - html.H1: Distributed Charge Dashboard
-    - html.Div: Power payments over lightning!
+    - html.H1: Distributed Charge - DASH
+    - html.Div: Visualizing energy payments over lightning!
     - dcc.Store:
         id: datalog-store
     - dcc.Store:
