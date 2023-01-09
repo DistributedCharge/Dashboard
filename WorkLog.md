@@ -1,3 +1,5 @@
+# 2023-01-08 22:22:54.473404: clock-out
+
 * fixed xaxis label
 * converting to kWh
 
