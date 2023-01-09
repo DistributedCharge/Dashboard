@@ -80,6 +80,7 @@ def initialize_datalog_figure(param_y, param_x, data_limit):
     """initializes figures 1 and 2"""
     datalog = parse_datalog(datalog_filename, data_limit,
         set_time_index=False).drop(columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
+    datalog.sort_values('Time', inplace=True)
     # print('initial datalog range:', datalog.Time.values[[0,-1]])
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
@@ -124,6 +125,7 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
     if t_f > t_i:
         # gather new data starting at the end of the previous time series
         df.set_index('Time', inplace=True)
+        df.sort_index(inplace=True)
         subset = df.loc[t_i:t_f].reset_index()
         if isinstance(param1, str):
             fig = plot_parameter(subset, param1, param2, default_layout)
@@ -162,11 +164,22 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
         print(f'No need to update: {t_i} <= {t_f}')
         raise PreventUpdate
 
+def initialize_tertiary_figure(preset, data_limit):
+    param_1, param_2, param_3 = preset.split('_')
+    fig = initialize_datalog_figure([param_1, param_2], param_3, data_limit)
+    return fig
+
 def update_datalog_figure(interval, param1, param2, data_limit, data_store):
     return update_from_file(datalog_filename, param1, param2, data_store, data_limit, render_last=True)
 
 def update_secondary_figure(interval, param1, param2, data_limit, data_store):
     return update_from_file(datalog_filename, param1, param2, data_store, data_limit, render_last=False)
+
+def update_tertiary_figure(interval, preset, data_limit, data_store):
+    param_1, param_2, param_3 = preset.split('_')
+    return update_from_file(datalog_filename, [param_1, param_2], param_3, data_store, data_limit, render_last=False)
+
+
 
 
 discrete_datalog_filename = f"{os.environ['DATA_PATH']}/{os.environ['DISCRETE_DATA_LOG']}"
