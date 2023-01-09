@@ -72,9 +72,9 @@ y_options:
 - label: energy delivered
   value: EnergyDelivered[Wh]
 - label: rate
-  value: Rate[sat/Wh]
+  value: Rate[sat/kWh]
 - label: max authorized rate
-  value: MaxAuthorizedRate[sat/Wh]
+  value: MaxAuthorizedRate[sat/kWh]
 - label: energy cost
   value: EnergyCost
 - label: total payment amount
@@ -100,9 +100,9 @@ x_options:
 - label: energy delivered
   value: EnergyDelivered[Wh]
 - label: rate
-  value: Rate[sat/Wh]
+  value: Rate[sat/kWh]
 - label: max authorized rate
-  value: MaxAuthorizedRate[sat/Wh]
+  value: MaxAuthorizedRate[sat/kWh]
 - label: energy cost
   value: EnergyCost
 - label: total payment amount
@@ -118,7 +118,7 @@ presets:
   - label: Power vs Time
     value: Power[W]_Time
   - label: Power vs Rate
-    value: Power[W]_Rate[sat/Wh]
+    value: Power[W]_Rate[sat/kWh]
   - label: Volts vs Power
     value: Volts_Power[W]
   - label: Volts vs Amps
@@ -126,9 +126,9 @@ presets:
   - label: Credit vs time
     value: Credit[sats]_Time
   - label: Rate vs Time
-    value: Rate[sat/Wh]_Time
+    value: Rate[sat/kWh]_Time
   - label: Max Authorized Rate vs Time
-    value: MaxAuthorizedRate[sat/Wh]_Time
+    value: MaxAuthorizedRate[sat/kWh]_Time
   - label: Total Payment Amount vs Time
     value: TotalPaymentAmount[sats]_Time
   - label: Energy Cost vs Time
@@ -254,7 +254,7 @@ layout:
                     - dcc.Dropdown:
                         id: secondary-preset
                         clearable: False
-                        value: Power[W]_Rate[sat/Wh]
+                        value: Power[W]_Rate[sat/kWh]
                         options: ${presets}
               - dbc.Col:
                   width: 2
@@ -280,7 +280,7 @@ layout:
                     - dcc.Dropdown:
                         id: param4
                         clearable: False
-                        value: Rate[sat/Wh]
+                        value: Rate[sat/kWh]
                         options: ${x_options}
         - html.Br:
         - dbc.Row:
