@@ -146,8 +146,24 @@ layout:
     - dcc.Location:
         id: url
         refresh: False
-    - html.H1: Distributed Charge - DASH
-    - html.Div: Visualizing energy payments over lightning!
+    - dbc.Row:
+        children:
+        - dbc.Col:
+            width: 4
+            children:
+            - html.H1: Distributed Charge - DASH
+            - html.Div: Visualizing energy payments over lightning!
+        - dbc.Col:
+            width:
+              size: 3
+              offset: 5
+            children:
+            - dbc.NavLink:
+                children: Distributed Charge Project (Schroder)
+                href: http://andyschroder.com/DistributedCharge/
+            - dbc.NavLink:
+                children: Dashboard from @asherp
+                href: https://twitter.com/asherp
     - dcc.Store:
         id: datalog-store
     - dcc.Store:
@@ -169,6 +185,9 @@ layout:
             bordered: True
             hover: True
             color: dark
+            size: lg
+            style:
+              font-size: medium
     - dbc.Card:
         body: True
         children:
@@ -190,7 +209,7 @@ layout:
                     - dcc.Dropdown:
                         id: param1
                         clearable: False
-                        multi: True
+                        multi: False
                         value: Power[W]
                         options: ${y_options}
               - dbc.Col:

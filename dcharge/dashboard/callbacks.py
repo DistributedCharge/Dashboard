@@ -211,6 +211,19 @@ def update_interval(dt):
 
 
 def update_recent_table(df):
-    table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True)
-    return table.children
+    """
+    Row 1: Power, Volts, Amps
+    Row 2: Session time, Energy Delivered,
+    Row 3: Total number of payments, Total Payment Amount, Energy Cost, Credit
+    Row 4: Sale Period Number, Sale Period Time Remaining, Rate, Max Authorized Rate
+    """
+    row_1 = df[['Power[W]', 'Volts', 'Amps']]
+    row_2 = df[['SessionTime', 'EnergyDelivered[Wh]']]
+    row_3 = df[['TotalNumberOfPayments', 'TotalPaymentAmount[sats]', 'EnergyCost', 'Credit[sats]']]
+    row_4 = df[['SalePeriodNumber', 'SalePeriodTimeRemaining[sec]', 'Rate[sat/kWh]', 'MaxAuthorizedRate[sat/kWh]']]
+
+    tables = []
+    for row in [row_1, row_2, row_3, row_4]:
+        tables.append(dbc.Table.from_dataframe(row, striped=True, bordered=True, hover=True))
+    return tables
 

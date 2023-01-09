@@ -1,3 +1,4 @@
+* external links, split summary table into rows
 
 # 2023-01-09 13:26:26.810190: clock-in
 
