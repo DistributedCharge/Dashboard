@@ -87,6 +87,7 @@ def initialize_datalog_figure(param_y, param_x, data_limit):
         fig_ = plot_parameter(datalog, param_y, param_x, default_layout)
         fig.add_trace(fig_.data[0])
         fig.update_yaxes(title_text=param_y)
+        fig.update_xaxes(title_text=param_x)
     
     # multiple variables selected
     else:
@@ -97,6 +98,7 @@ def initialize_datalog_figure(param_y, param_x, data_limit):
             fig_ = plot_parameter(datalog, _, param_x, default_layout)
             fig.add_trace(fig_.data[0], secondary_y=secondary_y)
             fig.update_yaxes(title_text=_, secondary_y=secondary_y)
+            fig.update_xaxes(title_text=param_x)
 
     fig.update_layout(**default_layout)
     return fig

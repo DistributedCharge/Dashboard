@@ -46,6 +46,19 @@ def tail(f, window=20):
 def assign_credit(df):
     return df.assign(**{'Credit[sats]': df['TotalPaymentAmount[sats]'] - df['EnergyCost']})
 
+def convert_to_sats_per_kWh(df):
+    """unit conversion for power
+    also converts results to int
+    """
+    for _ in df.columns:
+        old_unit = '[sat/Wh]'
+        new_unit = '[sat/kWh]'
+        varname = _.split(old_unit)[0]
+        if old_unit in _:
+            df[_] = (1000*df[_]).astype(int)
+            df.rename(columns={_: f'{varname}{new_unit}'}, inplace=True)
+    return df
+
 def parse_datalog(fname, data_limit, set_time_index=False):
 
     lines = []
@@ -72,6 +85,8 @@ def parse_datalog(fname, data_limit, set_time_index=False):
         df.set_index('Time', inplace=True)
 
     df = assign_credit(df)
+
+    df = convert_to_sats_per_kWh(df)
 
     return df
 

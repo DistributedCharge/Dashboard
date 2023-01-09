@@ -1,3 +1,10 @@
+# 2023-01-08 22:22:54.473404: clock-out
+
+* fixed xaxis label
+* converting to kWh
+
+# 2023-01-08 21:49:49.439483: clock-in
+
 # 2023-01-07 23:38:20.077676: clock-out
 
 * adding multiple y axes
