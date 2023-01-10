@@ -146,12 +146,30 @@ layout:
     - dcc.Location:
         id: url
         refresh: False
-    - html.H1: Distributed Charge - DASH
-    - html.Div: Visualizing energy payments over lightning!
+    - dbc.Row:
+        children:
+        - dbc.Col:
+            width: 4
+            children:
+            - html.H1: Distributed Charge - DASH
+            - html.Div: Visualizing energy payments over lightning!
+        - dbc.Col:
+            width:
+              size: 3
+              offset: 5
+            children:
+            - dbc.NavLink:
+                children: Distributed Charge Project (Schroder)
+                href: http://andyschroder.com/DistributedCharge/
+            - dbc.NavLink:
+                children: Dashboard from @asherp
+                href: https://twitter.com/asherp
     - dcc.Store:
         id: datalog-store
     - dcc.Store:
         id: datalog-secondary-store
+    - dcc.Store:
+        id: datalog-tertiary-store
     - dcc.Store:
         id: discrete-store
     - dcc.Store:
@@ -169,6 +187,8 @@ layout:
             bordered: True
             hover: True
             color: dark
+            style:
+              font-size: small
     - dbc.Card:
         body: True
         children:
@@ -190,7 +210,7 @@ layout:
                     - dcc.Dropdown:
                         id: param1
                         clearable: False
-                        multi: True
+                        multi: False
                         value: Power[W]
                         options: ${y_options}
               - dbc.Col:
@@ -287,6 +307,37 @@ layout:
             children:
             - dcc.Graph:
                 id: plot-secondary
+                style:
+                  height: 400
+                config: ${plot_config}
+                mathjax: True
+                figure: ${default_figure}
+        - html.Br:
+    - dbc.Card:
+        body: True
+        children:
+        - dbc.Row:
+            children:
+              - dbc.Col:
+                  width: 2
+                  children:
+                    - dbc.Label: Tertiary preset
+                    - dcc.Dropdown:
+                        id: tertiary-preset
+                        clearable: False
+                        # Max Authorized Rate vs time AND Rate vs time OR
+                        # Total Payment Amount vs time AND Energy Cost vs time
+                        value: MaxAuthorizedRate[sat/kWh]_Rate[sat/kWh]_Time
+                        options:
+                          - label: max authorized rate, rate vs time
+                            value: MaxAuthorizedRate[sat/kWh]_Rate[sat/kWh]_Time
+                          - label: total payment amount, energy cost vs time
+                            value: TotalPaymentAmount[sats]_EnergyCost_Time
+        - html.Br:
+        - dbc.Row:
+            children:
+            - dcc.Graph:
+                id: plot-tertiary
                 style:
                   height: 400
                 config: ${plot_config}
@@ -422,10 +473,6 @@ callbacks:
     output:
     - id: plot-primary
       attr: figure
-    # - id: param1
-    #   attr: options
-    # - id: param2
-    #   attr: options
     callback: callbacks.initialize_datalog_figure
 
 
@@ -485,6 +532,36 @@ callbacks:
       attr: data
     callback: callbacks.update_secondary_figure
 
+  # ### Tertiary Plot ###########
+  initialize_tertiary_figure:
+    input:
+    - id: tertiary-preset
+      attr: value
+    - id: data-limit
+      attr: value
+    output:
+    - id: plot-tertiary
+      attr: figure
+    callback: callbacks.initialize_tertiary_figure
+
+
+  update_tertiary_figure:
+    input:
+    - id: update-interval
+      attr: n_intervals
+    - id: tertiary-preset
+      attr: value
+    - id: data-limit
+      attr: value
+    state:
+    - id: datalog-tertiary-store
+      attr: data
+    output:
+    - id: plot-tertiary
+      attr: extendData
+    - id: datalog-tertiary-store
+      attr: data
+    callback: callbacks.update_tertiary_figure
 
   # # ######### plot discrete
   # initialize_discrete_figure:

@@ -106,6 +106,7 @@ def plot_parameter(df, param1, param2, layout_params):
     fig = go.Figure(go.Scatter(
                     x=df[param2],
                     y=df[param1],
+                    name=param1,
                     mode=mode),
                 layout=layout)
     return fig

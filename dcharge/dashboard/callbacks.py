@@ -80,6 +80,7 @@ def initialize_datalog_figure(param_y, param_x, data_limit):
     """initializes figures 1 and 2"""
     datalog = parse_datalog(datalog_filename, data_limit,
         set_time_index=False).drop(columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
+    datalog.sort_values('Time', inplace=True)
     # print('initial datalog range:', datalog.Time.values[[0,-1]])
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
@@ -124,6 +125,7 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
     if t_f > t_i:
         # gather new data starting at the end of the previous time series
         df.set_index('Time', inplace=True)
+        df.sort_index(inplace=True)
         subset = df.loc[t_i:t_f].reset_index()
         if isinstance(param1, str):
             fig = plot_parameter(subset, param1, param2, default_layout)
@@ -162,11 +164,22 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
         print(f'No need to update: {t_i} <= {t_f}')
         raise PreventUpdate
 
+def initialize_tertiary_figure(preset, data_limit):
+    param_1, param_2, param_3 = preset.split('_')
+    fig = initialize_datalog_figure([param_1, param_2], param_3, data_limit)
+    return fig
+
 def update_datalog_figure(interval, param1, param2, data_limit, data_store):
     return update_from_file(datalog_filename, param1, param2, data_store, data_limit, render_last=True)
 
 def update_secondary_figure(interval, param1, param2, data_limit, data_store):
     return update_from_file(datalog_filename, param1, param2, data_store, data_limit, render_last=False)
+
+def update_tertiary_figure(interval, preset, data_limit, data_store):
+    param_1, param_2, param_3 = preset.split('_')
+    return update_from_file(datalog_filename, [param_1, param_2], param_3, data_store, data_limit, render_last=False)
+
+
 
 
 discrete_datalog_filename = f"{os.environ['DATA_PATH']}/{os.environ['DISCRETE_DATA_LOG']}"
@@ -211,6 +224,19 @@ def update_interval(dt):
 
 
 def update_recent_table(df):
-    table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True)
-    return table.children
+    """
+    Row 1: Power, Volts, Amps
+    Row 2: Session time, Energy Delivered,
+    Row 3: Total number of payments, Total Payment Amount, Energy Cost, Credit
+    Row 4: Sale Period Number, Sale Period Time Remaining, Rate, Max Authorized Rate
+    """
+    row_1 = df[['Power[W]', 'Volts', 'Amps']]
+    row_2 = df[['SessionTime', 'EnergyDelivered[Wh]']]
+    row_3 = df[['TotalNumberOfPayments', 'TotalPaymentAmount[sats]', 'EnergyCost', 'Credit[sats]']]
+    row_4 = df[['SalePeriodNumber', 'SalePeriodTimeRemaining[sec]', 'Rate[sat/kWh]', 'MaxAuthorizedRate[sat/kWh]']]
+
+    tables = []
+    for row in [row_1, row_2, row_3, row_4]:
+        tables.append(dbc.Table.from_dataframe(row, striped=True, bordered=True, hover=True))
+    return tables
 
