@@ -1,5 +1,5 @@
 FROM ubuntu:20.04
-LABEL maintainer "Asher Pembroke <apembroke@predsci.com>"
+LABEL maintainer "Asher Pembroke <apembroke@gmail.com>"
 
 RUN apt update
 RUN apt install -y python3-pip git

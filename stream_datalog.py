@@ -30,7 +30,7 @@ with open(read_variable_datalog, 'r') as f:
     variable_datalog_lines = f.readlines()
 
 
-sleep_time = 1 # seconds
+sleep_time = int(os.environ.get('SLEEP_TIME', 1)) # seconds
 
 datalog_header = "UnixTime\tDateTime\tSessionTime\tSalePeriodTimeRemaining[sec]\tSalePeriodNumber\tPower[W]\tVolts\tAmps\tEnergyDelivered[Wh]\tRate[sat/Wh]\tMaxAuthorizedRate[sat/Wh]\tEnergyCost\tTotalPaymentAmount[sats]\tTotalNumberOfPayments\n"
 discrete_datalog_header = 'UnixTime\tDateTime\tRate[sat/Wh]\tPercentLoad[%]\tUnknown\n'

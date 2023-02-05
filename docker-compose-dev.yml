@@ -44,6 +44,7 @@ services:
       READ_DATA_LOG: "${READ_DATA_LOG}"
       READ_DISCRETE_DATA_LOG: "${READ_DISCRETE_DATA_LOG}"
       READ_VARIABLE_DATA_LOG: "${READ_VARIABLE_DATA_LOG}"
+      SLEEP_TIME: 2
     volumes:
     - type: bind
       source: .
@@ -51,6 +52,7 @@ services:
     container_name: dcharge-simulator
     command:
       - python3
+      - -u # force stdout
       - stream_datalog.py
     working_dir: /dashboard
 
@@ -74,6 +76,7 @@ services:
     container_name: dcharge-dashboard
     command:
       - python3
+      - -u # force stdout
       - dashboard.py
     working_dir: /dashboard/dcharge/dashboard
 

@@ -1,3 +1,24 @@
+# 2023-02-05 16:40:21.827895: clock-out
+
+* debug messages visible
+* still getting issues with data disappearing, may be resolved by https://github.com/DistributedCharge/Dashboard/issues/12
+* how extendData is supposed to work: https://plotly.com/javascript/plotlyjs-function-reference/#plotlyextendtraces
+
+# 2023-02-05 16:03:30.036851: clock-in
+
+# 2023-02-05 15:44:54.523046: clock-out
+
+
+# 2023-02-05 15:25:55.256680: clock-in
+
+# 2023-02-05 14:22:12.020325: clock-out
+
+* tertiary figure working again
+* debugging tertiary
+* fixed bug loading smaller files
+
+# 2023-02-05 12:08:02.689340: clock-in
+
 # 2023-01-09 14:59:59.163369: clock-out
 
 * added plot for showing two variables

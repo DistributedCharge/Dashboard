@@ -176,7 +176,7 @@ layout:
         id: variable-store
     - dcc.Interval:
         id: update-interval
-        interval: 2000 # ten seconds 
+        interval: 2000 # two seconds 
 
     - dbc.Card:
         body: True
@@ -239,7 +239,7 @@ layout:
                       id: update-interval-value
                       type: number
                       step: 1
-                      min: 2
+                      min: 1
                       value: 2
               - dbc.Col:
                   width: 1
@@ -249,8 +249,8 @@ layout:
                       id: data-limit
                       type: number
                       step: 100
-                      min: 100
-                      value: 500
+                      min: 10
+                      value: 100
         - html.Br:
         - dbc.Row:
             children:
