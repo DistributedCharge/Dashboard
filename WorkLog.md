@@ -1,3 +1,4 @@
+* tertiary figure working again
 * debugging tertiary
 * fixed bug loading smaller files
 

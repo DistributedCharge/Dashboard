@@ -556,6 +556,8 @@ callbacks:
     state:
     - id: datalog-tertiary-store
       attr: data
+    - id: plot-tertiary
+      attr: figure
     output:
     - id: plot-tertiary
       attr: extendData

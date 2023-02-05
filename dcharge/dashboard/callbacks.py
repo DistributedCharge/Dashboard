@@ -133,6 +133,8 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
             if len(param1) > 2:
                 print(f"can't update more than 2 at a time yet {param1}")
                 raise PreventUpdate
+            else:
+                print(f'updating parameters {param1}')
             x_vals = []
             y_vals = []
             trace_indices = []
@@ -140,17 +142,21 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
                 fig = plot_parameter(subset, _, param2, default_layout)
                 trace = fig.data[0].to_plotly_json()
                 x = trace['x']
-                x_vals.append(x)
                 y = trace['y']
+
+                # if i == 0:
+                print(f'appending {i, len(x), len(y)}')
+                x_vals.append(x)
                 y_vals.append(y)
                 trace_indices.append(i)
-            print(f'xvals shape {np.array(x_vals).shape}')
+                # if i == 1:
+                #     print(f'cannot append {i, len(x), len(y)}')
+            print(f'xvals, yvals shape, trace indices {np.array(x_vals).shape, np.array(y_vals).shape, trace_indices}')
             if render_last:
                 result = [dict(x=x_vals, y=y_vals), trace_indices, len(param1)*[data_limit]], data_store, update_recent_table(df.iloc[[-1]])
             else:
                 result = [dict(x=x_vals, y=y_vals), trace_indices, len(param1)*[data_limit]], data_store
             print('Updating dashboard with multiple traces')
-            print(result)
             return result
 
     else:
@@ -169,8 +175,9 @@ def update_datalog_figure(interval, param1, param2, data_limit, data_store):
 def update_secondary_figure(interval, param1, param2, data_limit, data_store):
     return update_from_file(datalog_filename, param1, param2, data_store, data_limit, render_last=False)
 
-def update_tertiary_figure(interval, preset, data_limit, data_store):
+def update_tertiary_figure(interval, preset, data_limit, data_store, fig_state):
     print('updating tertiary')
+    # raise PreventUpdate
     param_1, param_2, param_3 = preset.split('_')
     return update_from_file(datalog_filename, [param_1, param_2], param_3, data_store, data_limit, render_last=False)
 
