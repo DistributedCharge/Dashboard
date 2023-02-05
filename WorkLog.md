@@ -1,3 +1,6 @@
+
+# 2023-02-05 12:08:02.689340: clock-in
+
 # 2023-01-09 14:59:59.163369: clock-out
 
 * added plot for showing two variables
