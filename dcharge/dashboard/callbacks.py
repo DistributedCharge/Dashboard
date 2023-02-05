@@ -127,10 +127,11 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
                 result = [dict(x=[x], y=[y]), [0], data_limit], data_store, update_recent_table(df.iloc[[-1]])
             else:
                 result = [dict(x=[x], y=[y]), [0], data_limit], data_store
-            print('Updating dashboard')
+            # print('Updating dashboard')
             return result
         else:
             if len(param1) > 2:
+                print(f"can't update more than 2 at a time yet {param1}")
                 raise PreventUpdate
             x_vals = []
             y_vals = []
@@ -149,6 +150,7 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
             else:
                 result = [dict(x=x_vals, y=y_vals), trace_indices, len(param1)*[data_limit]], data_store
             print('Updating dashboard with multiple traces')
+            print(result)
             return result
 
     else:
@@ -157,6 +159,7 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
 
 def initialize_tertiary_figure(preset, data_limit):
     param_1, param_2, param_3 = preset.split('_')
+    print('initalizing tertiary figure')
     fig = initialize_datalog_figure([param_1, param_2], param_3, data_limit)
     return fig
 
@@ -167,6 +170,7 @@ def update_secondary_figure(interval, param1, param2, data_limit, data_store):
     return update_from_file(datalog_filename, param1, param2, data_store, data_limit, render_last=False)
 
 def update_tertiary_figure(interval, preset, data_limit, data_store):
+    print('updating tertiary')
     param_1, param_2, param_3 = preset.split('_')
     return update_from_file(datalog_filename, [param_1, param_2], param_3, data_store, data_limit, render_last=False)
 

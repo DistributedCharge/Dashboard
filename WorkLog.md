@@ -1,3 +1,4 @@
+* debugging tertiary
 * fixed bug loading smaller files
 
 # 2023-02-05 12:08:02.689340: clock-in

@@ -44,6 +44,7 @@ services:
       READ_DATA_LOG: "${READ_DATA_LOG}"
       READ_DISCRETE_DATA_LOG: "${READ_DISCRETE_DATA_LOG}"
       READ_VARIABLE_DATA_LOG: "${READ_VARIABLE_DATA_LOG}"
+      SLEEP_TIME: 2
     volumes:
     - type: bind
       source: .

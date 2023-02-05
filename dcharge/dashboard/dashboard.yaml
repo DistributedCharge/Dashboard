@@ -239,7 +239,7 @@ layout:
                       id: update-interval-value
                       type: number
                       step: 1
-                      min: 2
+                      min: 1
                       value: 2
               - dbc.Col:
                   width: 1
