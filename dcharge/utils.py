@@ -55,7 +55,7 @@ def convert_to_sats_per_kWh(df):
         new_unit = '[sat/kWh]'
         varname = _.split(old_unit)[0]
         if old_unit in _:
-            df[_] = (1000*df[_]).astype(int)
+            df[_] = np.floor(pd.to_numeric(1000*df[_], errors='coerce')).astype('Int64')
             df.rename(columns={_: f'{varname}{new_unit}'}, inplace=True)
     return df
 
@@ -67,7 +67,11 @@ def parse_datalog(fname, data_limit, set_time_index=False):
         columns = line.strip().split('\t')
         ncols = len(columns)
         lines = tail(f, data_limit)
-        
+
+    if len(lines) < data_limit:
+        # remove the header line
+        lines = lines[1:]
+
     lines = [line.strip().split('\t') for line in lines]
 
     df = pd.DataFrame(lines, columns=columns)
@@ -81,6 +85,7 @@ def parse_datalog(fname, data_limit, set_time_index=False):
             pass
 
     df['Time'] = pd.to_datetime(df.UnixTime, unit='s')
+
     if set_time_index:
         df.set_index('Time', inplace=True)
 

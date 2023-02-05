@@ -66,15 +66,6 @@ print(f'datalog filename: {datalog_filename}')
 def update_primary_params(preset):
     return preset.split('_')
 
-# def initialize_datalog_figure(param_y, param_x, data_limit):
-#     """initializes figures 1 and 2"""
-#     datalog = parse_datalog(datalog_filename, data_limit,
-#         set_time_index=False).drop(columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
-#     # print('initial datalog range:', datalog.Time.values[[0,-1]])
-
-#     fig = plot_parameter(datalog, param_y, param_x, default_layout)
-
-#     return fig
 
 def initialize_datalog_figure(param_y, param_x, data_limit):
     """initializes figures 1 and 2"""
@@ -111,14 +102,14 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
         df = parse_datalog(fname, data_limit,
             set_time_index=False).drop(
             columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
-        t_i, t_f = df.Time.values[[0,-1]]
+        t_i, t_f = df.Time.values[[0,-1]] # extract start and end times from file
         data_store = dict(t_final=t_f)
     else:
         # load current datalog file (it may have been updated)
         df = parse_datalog(fname, data_limit,
             set_time_index=False).drop(
             columns=['UnixTime', 'DateTime'])
-        t_i = pd.to_datetime(data_store['t_final'])
+        t_i = pd.to_datetime(data_store['t_final']) # start at the end of previous data
         t_f = df.Time.values[-1]
         data_store = dict(t_final=t_f)
 
