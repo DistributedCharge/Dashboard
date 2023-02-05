@@ -1,3 +1,6 @@
+* debug messages visible
+* still getting issues with data disappearing, may be resolved by https://github.com/DistributedCharge/Dashboard/issues/12
+* how extendData is supposed to work: https://plotly.com/javascript/plotlyjs-function-reference/#plotlyextendtraces
 
 # 2023-02-05 16:03:30.036851: clock-in
 

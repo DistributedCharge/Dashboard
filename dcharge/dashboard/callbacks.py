@@ -10,6 +10,7 @@ from dash.exceptions import PreventUpdate
 import logging
 import dash_bootstrap_components as dbc
 import dash
+from dcharge.utils import get_module_logger
 
 from plotly.subplots import make_subplots
 
@@ -17,7 +18,9 @@ from plotly.subplots import make_subplots
 
 # logging.basicConfig(filename='dashboard.log', level=logging.DEBUG)
 
-logging.debug('Starting dashboard')
+
+logger = get_module_logger(__name__)
+logger.info("Starting Dashboard")
 
 
 dashboard_dir = os.path.dirname(os.path.abspath(__file__))
@@ -59,7 +62,7 @@ def initialize_plot(url):
 
 
 datalog_filename = f"{os.environ['DATA_PATH']}/{os.environ['DATA_LOG']}"
-print(f'datalog filename: {datalog_filename}')
+logger.info(f'datalog filename: {datalog_filename}')
 
 
 
@@ -72,7 +75,7 @@ def initialize_datalog_figure(param_y, param_x, data_limit):
     datalog = parse_datalog(datalog_filename, data_limit,
         set_time_index=False).drop(columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
     datalog.sort_values('Time', inplace=True)
-    # print('initial datalog range:', datalog.Time.values[[0,-1]])
+    # logger.info('initial datalog range:', datalog.Time.values[[0,-1]])
     fig = make_subplots(specs=[[{"secondary_y": True}]])
 
     if isinstance(param_y, str):
@@ -97,13 +100,17 @@ def initialize_datalog_figure(param_y, param_x, data_limit):
 
 
 def update_from_file(fname, param1, param2, data_store, data_limit, render_last=False):
+    """data_store will keep the last time interval sent to the graph
+
+    Make sure the total number of points in the graph is <= data_limit 
+    """
     if data_store is None:
         # load current datalog file
         df = parse_datalog(fname, data_limit,
             set_time_index=False).drop(
             columns=['UnixTime', 'DateTime']).iloc[-data_limit:]
         t_i, t_f = df.Time.values[[0,-1]] # extract start and end times from file
-        data_store = dict(t_final=t_f)
+        data_store = dict(t_init=t_i, t_final=t_f)
     else:
         # load current datalog file (it may have been updated)
         df = parse_datalog(fname, data_limit,
@@ -111,13 +118,14 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
             columns=['UnixTime', 'DateTime'])
         t_i = pd.to_datetime(data_store['t_final']) # start at the end of previous data
         t_f = df.Time.values[-1]
-        data_store = dict(t_final=t_f)
+        data_store = dict(t_init=t_i, t_final=t_f)
 
     if t_f > t_i:
         # gather new data starting at the end of the previous time series
         df.set_index('Time', inplace=True)
         df.sort_index(inplace=True)
-        subset = df.loc[t_i:t_f].reset_index()
+        subset = df.loc[df.index > t_i].reset_index()
+        # subset = df.loc[t_i:t_f].reset_index()
         if isinstance(param1, str):
             fig = plot_parameter(subset, param1, param2, default_layout)
             trace = fig.data[0].to_plotly_json()
@@ -127,14 +135,14 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
                 result = [dict(x=[x], y=[y]), [0], data_limit], data_store, update_recent_table(df.iloc[[-1]])
             else:
                 result = [dict(x=[x], y=[y]), [0], data_limit], data_store
-            # print('Updating dashboard')
+            logger.info(f'##### Updating dashboard with {len(x), len(y)} points##### ')
             return result
         else:
             if len(param1) > 2:
-                print(f"can't update more than 2 at a time yet {param1}")
+                logger.info(f"can't update more than 2 at a time yet {param1}")
                 raise PreventUpdate
             else:
-                print(f'updating parameters {param1}')
+                logger.info(f'updating parameters {param1}')
             x_vals = []
             y_vals = []
             trace_indices = []
@@ -145,27 +153,30 @@ def update_from_file(fname, param1, param2, data_store, data_limit, render_last=
                 y = trace['y']
 
                 # if i == 0:
-                print(f'appending {i, len(x), len(y)}')
+                logger.info(f'appending (index, xpnts, ypnts) {i, len(x), len(y)}')
                 x_vals.append(x)
                 y_vals.append(y)
                 trace_indices.append(i)
                 # if i == 1:
-                #     print(f'cannot append {i, len(x), len(y)}')
-            print(f'xvals, yvals shape, trace indices {np.array(x_vals).shape, np.array(y_vals).shape, trace_indices}')
+                #     logger.info(f'cannot append {i, len(x), len(y)}')
+
+            assert np.array(x_vals).shape == np.array(y_vals).shape
+
+            logger.info(f'xvals, yvals shape, trace indices {np.array(x_vals).shape, np.array(y_vals).shape, trace_indices}')
             if render_last:
-                result = [dict(x=x_vals, y=y_vals), trace_indices, len(param1)*[data_limit]], data_store, update_recent_table(df.iloc[[-1]])
+                result = ([dict(x=x_vals, y=y_vals), trace_indices, len(param1)*[data_limit]], data_store, update_recent_table(df.iloc[[-1]]))
             else:
-                result = [dict(x=x_vals, y=y_vals), trace_indices, len(param1)*[data_limit]], data_store
-            print('Updating dashboard with multiple traces')
+                result = ([dict(x=x_vals, y=y_vals), trace_indices, len(param1)*[data_limit]], data_store)
+            logger.info('Updating dashboard with multiple traces')
             return result
 
     else:
-        print(f'No need to update: {t_i} <= {t_f}')
+        logger.info(f'No need to update {param1}: {t_i} <= {t_f}')
         raise PreventUpdate
 
 def initialize_tertiary_figure(preset, data_limit):
     param_1, param_2, param_3 = preset.split('_')
-    print('initalizing tertiary figure')
+    logger.info('initalizing tertiary figure')
     fig = initialize_datalog_figure([param_1, param_2], param_3, data_limit)
     return fig
 
@@ -175,8 +186,8 @@ def update_datalog_figure(interval, param1, param2, data_limit, data_store):
 def update_secondary_figure(interval, param1, param2, data_limit, data_store):
     return update_from_file(datalog_filename, param1, param2, data_store, data_limit, render_last=False)
 
-def update_tertiary_figure(interval, preset, data_limit, data_store, fig_state):
-    print('updating tertiary')
+def update_tertiary_figure(interval, preset, data_limit, data_store):
+    logger.info('updating tertiary')
     # raise PreventUpdate
     param_1, param_2, param_3 = preset.split('_')
     return update_from_file(datalog_filename, [param_1, param_2], param_3, data_store, data_limit, render_last=False)

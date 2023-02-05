@@ -249,7 +249,7 @@ layout:
                       id: data-limit
                       type: number
                       step: 100
-                      min: 100
+                      min: 10
                       value: 100
         - html.Br:
         - dbc.Row:
@@ -556,8 +556,6 @@ callbacks:
     state:
     - id: datalog-tertiary-store
       attr: data
-    - id: plot-tertiary
-      attr: figure
     output:
     - id: plot-tertiary
       attr: extendData
